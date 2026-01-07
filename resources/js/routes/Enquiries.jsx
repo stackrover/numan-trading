@@ -21,15 +21,19 @@ export default function Enquiries() {
     };
 
     return (
-        <div className="p-8 space-y-8">
-            <header className="flex justify-between items-center">
+        <div className="p-6 lg:p-10 space-y-10 max-w-7xl mx-auto">
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Enquiries</h1>
-                    <p className="text-gray-500 mt-1">Manage and respond to customer inquiries.</p>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 mb-3">
+                        <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Active Inbox</span>
+                    </div>
+                    <h1 className="text-4xl font-black text-slate-950 tracking-tight leading-none">Customer Enquiries</h1>
+                    <p className="text-slate-500 font-medium mt-2">Track and respond to potential business opportunities and feedback.</p>
                 </div>
             </header>
 
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-[2rem] border border-slate-200/60 overflow-hidden shadow-none">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50/50">
@@ -55,7 +59,7 @@ export default function Enquiries() {
                                     <TableCell>
                                         <div className="flex flex-col">
                                             <span className="font-semibold">{enquiry.name}</span>
-                                            <span className="text-xs text-gray-400">{enquiry.email}</span>
+                                            <span className="text-xs text-slate-400">{enquiry.email}</span>
                                         </div>
                                     </TableCell>
                                     <TableCell className="font-medium">{enquiry.subject}</TableCell>

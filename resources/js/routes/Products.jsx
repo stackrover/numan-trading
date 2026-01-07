@@ -17,19 +17,23 @@ export default function Products() {
     };
 
     return (
-        <div className="p-8 space-y-8">
-            <header className="flex justify-between items-center">
+        <div className="p-6 lg:p-10 space-y-10 max-w-7xl mx-auto">
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Products</h1>
-                    <p className="text-gray-500 mt-1">Manage your catalog of items.</p>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-100 mb-3">
+                        <Icon icon="solar:box-minimalistic-bold" className="text-blue-600 text-xs" />
+                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Master Catalog</span>
+                    </div>
+                    <h1 className="text-4xl font-black text-slate-950 tracking-tight leading-none">Products</h1>
+                    <p className="text-slate-500 font-medium mt-2">Manage your inventory of colors and flavors across all regions.</p>
                 </div>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                    <Icon icon="solar:add-circle-linear" width="20" className="mr-2" />
+                <Button className="bg-slate-950 hover:bg-slate-800 text-white font-black h-12 px-8 rounded-2xl border border-slate-800 transition-all flex items-center gap-2 uppercase text-[11px] tracking-widest group">
+                    <Icon icon="solar:add-circle-bold" className="text-xl text-orange-400 group-hover:rotate-90 transition-transform" />
                     New Product
                 </Button>
             </header>
 
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-[2rem] border border-slate-200/60 overflow-hidden shadow-none">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-50/50">
