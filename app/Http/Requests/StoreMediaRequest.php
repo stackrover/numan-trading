@@ -11,7 +11,7 @@ class StoreMediaRequest extends FormRequest
    */
   public function authorize(): bool
   {
-    return true;
+    return $this->user() !== null;
   }
 
   /**
@@ -22,7 +22,26 @@ class StoreMediaRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'file' => 'required|image|max:102400', // Max 100MB
+      'file' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:102400', // 100MB = 102400 KB
     ];
+  }
+
+  public function messages(): array
+  {
+    return [
+      'file.required' => 'Please select a file to upload.',
+      'file.file' => 'The uploaded file is invalid.',
+      'file.mimes' => 'Only image files are supported. Allowed formats: JPEG, JPG, PNG, GIF, WEBP.',
+      'file.max' => 'The file size must not exceed 100MB.',
+    ];
+  }
+  protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+  {
+    \Illuminate\Support\Facades\Log::error('Media Upload Validation Failed', [
+      'errors' => $validator->errors()->toArray(),
+      'request' => $this->all(),
+      'files' => $this->allFiles(),
+    ]);
+    parent::failedValidation($validator);
   }
 }

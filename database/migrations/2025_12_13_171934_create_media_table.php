@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->unsignedInteger('height')->nullable();
             $table->longText('placeholder')->nullable();
             $table->string('path');
+            $table->string('url');
 
             $table->timestamps();
         });

@@ -12,7 +12,8 @@ class Block extends Model
     protected $fillable = [
         'title',
         'slug',
-        'page_slug',
+        'icon',
+        'page_id',
     ];
 
     protected $hidden = [];

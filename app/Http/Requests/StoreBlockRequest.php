@@ -11,7 +11,7 @@ class StoreBlockRequest extends FormRequest
    */
   public function authorize(): bool
   {
-    return false;
+    return $this->user() !== null;
   }
 
   /**
@@ -25,6 +25,7 @@ class StoreBlockRequest extends FormRequest
       "title" => "required|string|max:255",
       "slug" => "required|string|max:255|unique:blocks,slug",
       "page_id" => "required|exists:pages,id",
+      "icon" => "nullable|string|max:255",
     ];
   }
 }

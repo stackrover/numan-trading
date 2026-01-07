@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->string('slug')->index();
+            $table->string('icon')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

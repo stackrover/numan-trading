@@ -11,7 +11,7 @@ class StoreFieldRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user() !== null;
     }
 
     /**
@@ -22,7 +22,21 @@ class StoreFieldRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'block_id' => 'required|exists:blocks,id',
+            'label' => 'required|string|max:255',
+            'name' => 'required|string|max:255|alpha_dash',
+            'type' => 'required|string|in:text,number,select,checkbox,radio,textarea,date,upload,boolean,richtext,relation',
+            'order' => 'nullable|integer',
+            'options' => 'nullable|array',
+            'options.*' => 'string|max:255',
+            'validation' => 'nullable|array',
+            'default_value' => 'nullable|string|max:255',
+            'is_required' => 'nullable|boolean',
+            'has_many' => 'nullable|boolean',
+            'relation_model' => 'nullable|string|max:255',
+            'placeholder' => 'nullable|string|max:255',
+            'help_text' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:1000',
         ];
     }
 }

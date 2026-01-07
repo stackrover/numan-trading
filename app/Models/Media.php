@@ -18,6 +18,7 @@ class Media extends Model
         'height',
         'placeholder',
         'path',
+        'url',
     ];
 
     protected $hidden = ["path"];

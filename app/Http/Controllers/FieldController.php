@@ -57,7 +57,29 @@ class FieldController extends Controller
      */
     public function destroy(Field $field)
     {
-        $field->delete();
+        // 1. Clean up data in documents
+        $block = $field->block;
+        if ($block && $block->page_id) {
+            $document = \App\Models\Document::where('page_id', $block->page_id)->first();
+            if ($document && $document->data) {
+                $data = json_decode(json_encode($document->data), true);
+                $blockSlug = $block->slug;
+
+                if (isset($data[$blockSlug]) && isset($data[$blockSlug][$field->name])) {
+                    unset($data[$blockSlug][$field->name]);
+
+                    // If block is now empty, you might want to keep it or remove it.
+                    // Usually safer to keep the block key if it exists in the schema.
+
+                    $document->data = (object) $data;
+                    $document->save();
+                }
+            }
+        }
+
+        // 2. Hard delete the field
+        $field->forceDelete();
+
         return response()->json(null, 204);
     }
 

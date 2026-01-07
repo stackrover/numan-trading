@@ -27,6 +27,11 @@ class MediaController extends Controller
      */
     public function store(StoreMediaRequest $request)
     {
+        \Illuminate\Support\Facades\Log::info('Media Store Request Started', [
+            'has_file' => $request->hasFile('file'),
+            'file_name' => $request->file('file')?->getClientOriginalName(),
+        ]);
+
         $file = $request->file('file');
 
         // 1. File Details
@@ -62,6 +67,7 @@ class MediaController extends Controller
             'height' => $height,
             'placeholder' => $placeholder,
             'path' => $path,
+            'url' => Storage::url($path),
         ]);
 
         return response()->json($media, 201);

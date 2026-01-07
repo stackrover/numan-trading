@@ -21,6 +21,10 @@ class Field extends Model
         'default_value',
         'is_required',
         'has_many',
+        'relation_model',
+        'placeholder',
+        'help_text',
+        'description',
     ];
 
     protected $hidden = [];

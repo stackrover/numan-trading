@@ -11,7 +11,7 @@ class UpdatePageRequest extends FormRequest
    */
   public function authorize(): bool
   {
-    return true;
+    return $this->user() !== null;
   }
 
   /**
@@ -23,7 +23,7 @@ class UpdatePageRequest extends FormRequest
   {
     return [
       "title" => "nullable|string|max:255",
-      "slug" => "nullable|string|max:255|unique:fields,slug",
+      "slug" => "nullable|string|max:255|unique:pages,slug," . $this->page->id,
       'published_at' => 'nullable|date',
     ];
   }

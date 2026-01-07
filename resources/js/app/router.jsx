@@ -1,10 +1,11 @@
 import { createBrowserRouter } from "react-router";
 import RootLayout from "@/components/layouts/RootLayout";
 import ProtectedRoutesLayout from "@/components/layouts/ProtectedRoutesLayout";
+import AuthRoutesLayout from "@/components/layouts/AuthRoutesLayout";
 
 export const router = createBrowserRouter([
     {
-        path: '/',
+        path: "/",
         Component: RootLayout,
         hydrateFallbackElement: <div>Loading...</div>,
         children: [
@@ -12,17 +13,81 @@ export const router = createBrowserRouter([
             {
                 Component: ProtectedRoutesLayout,
                 children: [
+                    {
+                        index: true,
+                        lazy: async () => {
+                            const module = await import("@/routes/Dashboard");
+                            return { Component: module.default };
+                        },
+                    },
 
+                    {
+                        path: "/pages/:slug",
+                        lazy: async () => {
+                            const module = await import("@/routes/Page");
+                            return { Component: module.default };
+                        },
+                    },
+
+                    {
+                        path: "/enquiries",
+                        lazy: async () => {
+                            const module = await import("@/routes/Enquiries");
+                            return { Component: module.default };
+                        },
+                    },
+
+                    {
+                        path: "/enquiries/:id",
+                        lazy: async () => {
+                            const module = await import("@/routes/Inbox");
+                            return { Component: module.default };
+                        },
+                    },
+
+                    {
+                        path: "/products",
+                        lazy: async () => {
+                            const module = await import("@/routes/Products");
+                            return { Component: module.default };
+                        },
+                    },
                 ],
             },
 
             // Auth Routes
             {
-                path: "/login",
-                lazy: async () => {
-                    const module = await import("@/routes/auth/Login");
-                    return { Component: module.default };
-                }
+                Component: AuthRoutesLayout,
+                children: [
+                    {
+                        path: "/login",
+                        lazy: async () => {
+                            const module = await import("@/routes/auth/Login");
+                            return { Component: module.default };
+                        },
+                    },
+                    {
+                        path: "/register",
+                        lazy: async () => {
+                            const module = await import("@/routes/auth/Register");
+                            return { Component: module.default };
+                        },
+                    },
+                    {
+                        path: "/forgot-password",
+                        lazy: async () => {
+                            const module = await import("@/routes/auth/ForgotPassword");
+                            return { Component: module.default };
+                        },
+                    },
+                    {
+                        path: "/reset-password/:token",
+                        lazy: async () => {
+                            const module = await import("@/routes/auth/ResetPassword");
+                            return { Component: module.default };
+                        },
+                    },
+                ],
             },
         ],
     },

@@ -23,7 +23,7 @@ return new class extends Migration
                 "select",
                 "radio",
                 "checkbox",
-                "file",
+                "upload",
                 "richtext",
                 "relation",
             ])->default('text');
@@ -33,6 +33,11 @@ return new class extends Migration
             $table->text('default_value')->nullable();
             $table->boolean('is_required')->default(false);
             $table->boolean('has_many')->default(false);
+            $table->text('relation_model')->nullable();
+            $table->text('placeholder')->nullable();
+            $table->text('help_text')->nullable();
+            $table->text('description')->nullable();
+            $table->string('layout')->default('12');
 
             $table->unsignedBigInteger('block_id')->index();
             $table->foreign('block_id')->references('id')->on('blocks')->onDelete('cascade')->onUpdate('cascade');

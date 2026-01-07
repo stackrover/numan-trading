@@ -48,7 +48,7 @@ class BlockController extends Controller
     public function update(UpdateBlockRequest $request, Block $block, $slug)
     {
         $validated = $request->validated();
-        $block = $block->where('slug', $slug)->firstOrFail();
+        $block = $block->where('slug', $slug)->orWhere('id', $slug)->firstOrFail();
         $block->update($validated);
         return response()->json($block);
     }

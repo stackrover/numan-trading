@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Page extends Model
@@ -15,6 +16,7 @@ class Page extends Model
         'title',
         'slug',
         'published_at',
+        'icon',
     ];
 
 
@@ -22,9 +24,9 @@ class Page extends Model
 
     /* Relations  */
 
-    public function blocks(): BelongsTo
+    public function blocks(): HasMany
     {
-        return $this->belongsTo(Block::class);
+        return $this->hasMany(Block::class);
     }
 
     public function documents(): BelongsTo
@@ -32,8 +34,13 @@ class Page extends Model
         return $this->belongsTo(Document::class);
     }
 
-    public function seo(): BelongsTo
+    public function seo(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->belongsTo(Seo::class);
+        return $this->hasOne(Seo::class);
+    }
+
+    public function views(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(PageView::class, 'viewable');
     }
 }

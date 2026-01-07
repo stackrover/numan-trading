@@ -16,11 +16,13 @@ class DocumentsController extends Controller
     {
         $query = Document::query();
 
-        if ($request->has('page_slug')) {
-            $query->where('page_slug', $request->input('page_slug'));
+        if ($request->has('page_id')) {
+            $query->where('page_id', $request->input('page_id'));
         }
 
-        $documents = $query->get();
+        $documents = $query->with('page')->get()->map(function ($doc) {
+            return $doc->hydrateMedia();
+        });
         return response()->json($documents);
     }
 
@@ -37,9 +39,10 @@ class DocumentsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Document $document)
+    public function show($document)
     {
-        return response()->json($document);
+        $document = Document::with('page')->where('slug', $document)->firstOrFail();
+        return response()->json($document->hydrateMedia());
     }
 
     /**
@@ -59,6 +62,29 @@ class DocumentsController extends Controller
     {
         $document->delete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * Save page document with nested structure.
+     */
+    public function savePageDocument(Request $request)
+    {
+        $validated = $request->validate([
+            'page_id' => 'required|integer|exists:pages,id',
+            'slug' => 'required|string',
+            'data' => 'required|array',
+        ]);
+
+        $document = Document::updateOrCreate(
+            ['page_id' => $validated['page_id']],
+            [
+                'slug' => $validated['slug'],
+                'data' => $validated['data'],
+            ]
+        );
+
+        $document->load('page');
+        return response()->json($document->hydrateMedia());
     }
 
     /**

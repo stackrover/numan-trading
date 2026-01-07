@@ -11,7 +11,7 @@ class StoreDocumentRequest extends FormRequest
    */
   public function authorize(): bool
   {
-    return true;
+    return $this->user() !== null;
   }
 
   /**
@@ -23,7 +23,7 @@ class StoreDocumentRequest extends FormRequest
   {
     return [
       'slug' => 'required|string|max:255|unique:documents,slug',
-      'page_slug' => 'required|string|exists:pages,slug',
+      'page_id' => 'required|integer|exists:pages,id|unique:documents,page_id',
       'data' => 'nullable|array',
     ];
   }

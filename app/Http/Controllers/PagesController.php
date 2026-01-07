@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StorePageRequest;
 use App\Http\Requests\UpdatePageRequest;
 use App\Http\Requests\QueryPageRequest;
+use App\Http\Requests\UpdateSeoRequest;
 use App\Models\Page;
+use App\Models\Seo;
 
 class PagesController extends Controller
 {
@@ -52,7 +54,7 @@ class PagesController extends Controller
      */
     public function show($slug)
     {
-        $page = Page::where('slug', $slug)->firstOrFail();
+        $page = Page::with("blocks", "blocks.fields", "seo")->where('slug', $slug)->firstOrFail();
         return response()->json($page, 200);
     }
 
@@ -62,6 +64,19 @@ class PagesController extends Controller
     public function store(StorePageRequest $request)
     {
         $page = Page::create($request->validated());
+
+
+        $page->seo()->create([
+            'title' => $request->input('title'),
+            'description' => null,
+            'keywords' => null,
+            'author' => null,
+            'robots' => null,
+            'canonical_url' => null,
+            'twitter_title' => null,
+            'twitter_description' => null,
+            'twitter_image' => null,
+        ]);
         return response()->json($page, 201);
     }
 
@@ -102,5 +117,20 @@ class PagesController extends Controller
         $page = Page::withTrashed()->findOrFail($id);
         $page->forceDelete();
         return response()->json(null, 204);
+    }
+
+    /**
+     * Update the SEO for the specified page.
+     */
+    public function updateSeo(UpdateSeoRequest $request, $slug)
+    {
+        $page = Page::where('slug', $slug)->firstOrFail();
+
+        $seo = $page->seo()->updateOrCreate(
+            ['page_id' => $page->id],
+            $request->validated()
+        );
+
+        return response()->json($seo, 200);
     }
 }

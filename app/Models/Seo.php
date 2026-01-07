@@ -20,6 +20,7 @@ class Seo extends Model
         'twitter_image',
         'canonical_url',
         'robots',
+        'page_id',
     ];
 
     protected $hidden = [];
