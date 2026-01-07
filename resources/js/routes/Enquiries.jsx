@@ -30,18 +30,18 @@ export default function Enquiries() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="h-10 px-4 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                    <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                         <Icon icon="solar:filter-linear" className="text-lg" />
                         <span>Filter Index</span>
                     </button>
-                    <button className="h-10 px-4 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                    <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                         <Icon icon="solar:file-download-linear" className="text-lg" />
                         <span>Export CSV</span>
                     </button>
                 </div>
             </header>
 
-            <div className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">

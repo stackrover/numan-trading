@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { Icon } from "@iconify-icon/react";
 import { useDeleteField } from "@/services/field.service";
 import { UploadOrSelectMedia } from "../uploadOrSelectMedia";
+import { TiptapEditor } from "../ui/editor/Editor";
 import React from "react";
 
 const gridCol = {
@@ -152,8 +153,8 @@ const renderFieldInput = (field, value, onChange) => {
                                     defaultChecked={
                                         Array.isArray(value)
                                             ? value.includes(
-                                                  option.value ?? option,
-                                              )
+                                                option.value ?? option,
+                                            )
                                             : false
                                     }
                                     onCheckedChange={(checked) => {
@@ -205,13 +206,11 @@ const renderFieldInput = (field, value, onChange) => {
             );
 
         case "richtext":
-            // Placeholder for rich text editor - you may want to integrate a library like TipTap, Quill, etc.
             return (
-                <AutosizeTextarea
-                    {...commonProps}
-                    rows={8}
-                    onChange={(e) => onChange?.(e.target.value)}
-                    className="min-h-[200px]"
+                <TiptapEditor
+                    placeholder={field.placeholder || "Type / for commands..."}
+                    value={value ?? field.default_value ?? ""}
+                    onChange={(val) => onChange?.(val)}
                 />
             );
 

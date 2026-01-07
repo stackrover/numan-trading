@@ -37,8 +37,8 @@ export const Navbar = () => {
     const { leftContent, rightContent } = useNavbar();
 
     return (
-        <header className="h-20 flex items-center bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200 px-6 sm:px-8">
-            <div className="w-full">
+        <header className="h-16 flex items-center bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200 px-6 sm:px-8">
+            <div className="w-full max-w-7xl mx-auto">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-3">

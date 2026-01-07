@@ -46,10 +46,10 @@ export default function Dashboard() {
             {/* Clean Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {statCards.map((stat) => (
-                    <Card key={stat.title} className="border-slate-200/60 shadow-none hover:shadow-md hover:border-slate-300 transition-all rounded-2xl overflow-hidden group">
+                    <Card key={stat.title} className="border-slate-200/60 shadow-none hover:shadow-md hover:border-slate-300 transition-all rounded-xl overflow-hidden group">
                         <CardContent className="p-6">
                             <div className="flex items-center gap-4 mb-4">
-                                <div className={`size-12 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center`}>
+                                <div className={`size-12 rounded-lg ${stat.bg} ${stat.color} flex items-center justify-center`}>
                                     <Icon icon={stat.icon} className="text-2xl" />
                                 </div>
                                 <div className="flex flex-col">
@@ -73,21 +73,21 @@ export default function Dashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Visual Section */}
-                <Card className="lg:col-span-2 border-slate-200/60 shadow-none rounded-[2rem] overflow-hidden">
+                <Card className="lg:col-span-2 border-slate-200/60 shadow-none rounded-xl overflow-hidden">
                     <CardHeader className="p-8 pb-0">
                         <CardTitle className="text-xl font-bold text-slate-900">Engagement Trends</CardTitle>
                         <CardDescription className="text-sm">Regional visibility analytics over the last 30 days.</CardDescription>
                     </CardHeader>
                     <CardContent className="p-8 h-[360px] flex items-center justify-center bg-slate-50/30">
                         <div className="text-center space-y-4">
-                            <div className="size-16 bg-white rounded-2xl border border-slate-200 flex items-center justify-center mx-auto shadow-sm">
+                            <div className="size-16 bg-white rounded-xl border border-slate-200 flex items-center justify-center mx-auto shadow-sm">
                                 <Icon icon="solar:chart-2-linear" width="32" className="text-slate-300" />
                             </div>
                             <div>
                                 <h4 className="font-bold text-slate-800">Processing Analytics</h4>
                                 <p className="text-sm text-slate-500 max-w-[280px] mx-auto">Click 'Refresh' to update the visual data metrics for this period.</p>
                             </div>
-                            <button className="px-6 h-10 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 shadow-sm transition-all">
+                            <button className="px-6 h-10 rounded-lg bg-white border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 shadow-sm transition-all">
                                 Refresh Data
                             </button>
                         </div>
@@ -95,7 +95,7 @@ export default function Dashboard() {
                 </Card>
 
                 {/* Trending List */}
-                <Card className="border-slate-200/60 shadow-none rounded-[2rem] flex flex-col overflow-hidden">
+                <Card className="border-slate-200/60 shadow-none rounded-xl flex flex-col overflow-hidden">
                     <CardHeader className="p-8 pb-4">
                         <CardTitle className="text-xl font-bold text-slate-900">Popular Content</CardTitle>
                     </CardHeader>

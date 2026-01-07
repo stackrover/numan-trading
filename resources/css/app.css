@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -119,8 +120,8 @@
 }
 
 :root {
-    --radius: 1rem;
-    /* Slightly rounder for modern feel */
+    --radius: 0.5rem;
+    /* Classic sharp edges */
     --background: #ffffff;
     --canvas: #fcfcfd;
     /* Very subtle off-white for canvas layer */
@@ -146,8 +147,8 @@
 
     --destructive: #f43f5e;
     /* Rose 500 */
-    --border: #f1f5f9;
-    /* Softer borders */
+    --border: #e2e8f0;
+    /* Slate 200 - more visible than f1f5f9 */
     --ring: var(--brand-primary);
 
     --input: #ffffff;
@@ -202,15 +203,15 @@
     }
 
     .btn-primary {
-        @apply bg-[#4f46e5] hover:bg-[#4338ca] text-white font-medium h-12 px-6 rounded-xl shadow-sm transition-all;
+        @apply bg-[#4f46e5] hover:bg-[#4338ca] text-white font-medium h-12 px-6 rounded-lg shadow-sm transition-all;
     }
 
     .btn-secondary {
-        @apply bg-white hover:bg-slate-50 text-slate-700 font-medium h-12 px-6 rounded-xl border border-slate-200 shadow-sm transition-all;
+        @apply bg-white hover:bg-slate-50 text-slate-700 font-medium h-12 px-6 rounded-lg border border-slate-200 shadow-sm transition-all;
     }
 
     .card-classic {
-        @apply bg-white border border-slate-200/60 rounded-2xl shadow-sm;
+        @apply bg-white border border-slate-200/60 rounded-xl shadow-sm;
     }
 }
 

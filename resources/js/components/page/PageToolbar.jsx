@@ -16,8 +16,8 @@ export const TabButton = ({ isActive, icon, label, ...props }) => {
                 />
             )}
 
-            <div className="z-10! relative">
-                {icon && <Icon icon={icon} className="mr-2" />}
+            <div className="z-10! relative text-slate-600 font-semibold flex items-center">
+                {icon && <Icon icon={icon} className="mr-2 text-lg" />}
                 {label}
             </div>
         </button>
@@ -26,21 +26,23 @@ export const TabButton = ({ isActive, icon, label, ...props }) => {
 
 export const PageToolbar = ({ tabs, activeTab, setActiveTab }) => {
     return (
-        <div className="border-b border-border bg-accent flex items-center justify-between px-4 sm:px-6 lg:px-8">
-            <nav
-                className="flex items-center mx-auto bg-accent p-1 rounded-md relative"
-                aria-label="Tabs"
-            >
-                {tabs.map((tab) => (
-                    <TabButton
-                        key={tab.id}
-                        isActive={activeTab === tab.id}
-                        icon={tab.icon}
-                        label={tab.label}
-                        onClick={() => setActiveTab(tab.id)}
-                    />
-                ))}
-            </nav>
+        <div className="border-b border-slate-200 bg-white sticky top-0 z-20">
+            <div className="max-w-7xl mx-auto px-6 sm:px-8">
+                <nav
+                    className="flex items-center gap-2 p-1 relative h-12"
+                    aria-label="Tabs"
+                >
+                    {tabs.map((tab) => (
+                        <TabButton
+                            key={tab.id}
+                            isActive={activeTab === tab.id}
+                            icon={tab.icon}
+                            label={tab.label}
+                            onClick={() => setActiveTab(tab.id)}
+                        />
+                    ))}
+                </nav>
+            </div>
         </div>
     );
 };

@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router";
 import { useEnquiry, useReplyEnquiry } from "@/services/enquiry.service";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AutosizeTextarea } from "@/components/ui/textarea";
+import { TiptapEditor } from "@/components/ui/editor/Editor";
 import { format } from "date-fns";
 import { motion } from "motion/react";
 import { PlusIcon } from "lucide-react";
@@ -17,7 +17,7 @@ export default function Inbox() {
     const [replyMessage, setReplyMessage] = React.useState("");
 
     const handleReply = () => {
-        if (!replyMessage.trim()) return;
+        if (!replyMessage || replyMessage === '<p></p>') return;
         replyToEnquiry(
             { id, data: { message: replyMessage } },
             {
@@ -39,7 +39,7 @@ export default function Inbox() {
             <Icon icon="solar:danger-bold" className="text-5xl text-rose-500 mb-4" />
             <h2 className="text-xl font-bold text-slate-900 tracking-tight">Record Not Found</h2>
             <p className="text-slate-500 mt-2 font-medium">The requested enquiry could not be located.</p>
-            <Button onClick={() => navigate(-1)} className="mt-8 rounded-xl bg-slate-900 text-white font-bold h-11 px-8 shadow-sm">Return to Inbox</Button>
+            <Button onClick={() => navigate(-1)} className="mt-8 rounded-lg bg-slate-900 text-white font-bold h-11 px-8 shadow-sm">Return to Inbox</Button>
         </div>
     );
 
@@ -64,10 +64,10 @@ export default function Inbox() {
 
             <div className="grid gap-8">
                 {/* Client Signal */}
-                <Card className="border-slate-200/60 shadow-none rounded-2xl overflow-hidden bg-white">
+                <Card className="border-slate-200/60 shadow-none rounded-xl overflow-hidden bg-white">
                     <CardHeader className="flex flex-row items-center justify-between p-8 pb-6 border-b border-slate-50">
                         <div className="flex items-center gap-5">
-                            <div className="size-14 bg-slate-900 text-white flex items-center justify-center rounded-xl font-bold text-xl shadow-sm">
+                            <div className="size-14 bg-slate-900 text-white flex items-center justify-center rounded-lg font-bold text-xl shadow-sm">
                                 {enquiry.name.charAt(0)}
                             </div>
                             <div className="flex flex-col">
@@ -84,7 +84,7 @@ export default function Inbox() {
                     </CardHeader>
                     <CardContent className="p-8">
                         <div className="space-y-6">
-                            <div className="p-6 rounded-xl bg-slate-50 border border-slate-100">
+                            <div className="p-6 rounded-lg bg-slate-50 border border-slate-100">
                                 <h4 className="font-bold text-slate-900 text-base mb-3 border-b border-slate-200/60 pb-3">{enquiry.subject}</h4>
                                 <p className="text-slate-700 leading-relaxed font-medium whitespace-pre-wrap">{enquiry.message}</p>
                             </div>
@@ -93,7 +93,7 @@ export default function Inbox() {
                 </Card>
 
                 {/* Reply Section */}
-                <Card className="border-slate-200/60 shadow-none rounded-2xl overflow-hidden bg-slate-50/20">
+                <Card className="border-slate-200/60 shadow-none rounded-xl overflow-hidden bg-slate-50/20">
                     <CardHeader className="p-8 pb-4 border-b border-white/40">
                         <CardTitle className="text-sm font-bold flex items-center gap-3 text-slate-900 uppercase tracking-widest">
                             <Icon icon="solar:reply-2-linear" className="text-xl text-indigo-600" />
@@ -101,24 +101,23 @@ export default function Inbox() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-8 space-y-6">
-                        <AutosizeTextarea
+                        <TiptapEditor
                             placeholder="Type your official response here..."
                             value={replyMessage}
-                            onChange={(e) => setReplyMessage(e.target.value)}
-                            className="min-h-[200px] bg-white border-slate-200 rounded-xl p-6 font-medium text-slate-800 placeholder:text-slate-300 shadow-sm transition-all focus:border-indigo-500"
+                            onChange={setReplyMessage}
                         />
                         <div className="flex justify-end gap-3 pt-2">
                             <Button
                                 variant="outline"
                                 onClick={() => navigate(-1)}
-                                className="rounded-xl px-6 h-11 font-bold text-xs uppercase tracking-wider border-slate-200 text-slate-500 hover:text-slate-700 transition-all shadow-sm"
+                                className="rounded-lg px-6 h-11 font-bold text-xs uppercase tracking-wider border-slate-200 text-slate-500 hover:text-slate-700 transition-all shadow-sm"
                             >
                                 Discard
                             </Button>
                             <Button
                                 onClick={handleReply}
-                                disabled={isPending || !replyMessage.trim()}
-                                className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-11 px-8 rounded-xl transition-all flex items-center gap-2 text-xs uppercase tracking-wider shadow-sm"
+                                disabled={isPending || !replyMessage || replyMessage === '<p></p>'}
+                                className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-11 px-8 rounded-lg transition-all flex items-center gap-2 text-xs uppercase tracking-wider shadow-sm"
                             >
                                 {isPending ? "Sending..." : "Send Response"}
                                 <Icon icon="solar:plain-linear" className="text-lg" />

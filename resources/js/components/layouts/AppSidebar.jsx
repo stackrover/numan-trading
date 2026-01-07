@@ -56,7 +56,7 @@ export const AppSidebar = () => {
 
     return (
         <Sidebar variant="inset" className="border-r border-slate-100 bg-white">
-            <SidebarHeader className="h-20 flex items-center px-6 border-b border-slate-50">
+            <SidebarHeader className="h-16 flex items-center px-6 border-b border-slate-50">
                 <Link to="/" className="flex items-center gap-3">
                     <div className="size-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
                         <span className="text-white text-xl font-bold">N</span>

@@ -26,18 +26,18 @@ export default function Products() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="h-10 px-4 rounded-xl bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                    <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                         <Icon icon="solar:sort-linear" className="text-lg" />
                         <span>Filter Catalog</span>
                     </button>
-                    <Button className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-10 px-5 rounded-xl border border-slate-800 shadow-sm transition-all flex items-center gap-2 text-xs uppercase tracking-wider group">
+                    <Button className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-10 px-5 rounded-lg border border-slate-800 shadow-sm transition-all flex items-center gap-2 text-xs uppercase tracking-wider group">
                         <Icon icon="solar:add-circle-linear" className="text-lg" />
                         <span>Add New Product</span>
                     </Button>
                 </div>
             </header>
 
-            <div className="bg-white rounded-2xl border border-slate-200/60 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
@@ -110,7 +110,7 @@ export default function Products() {
                                                         <Icon icon="solar:trash-bin-trash-linear" width="18" />
                                                     </Button>
                                                 </AlertDialogTrigger>
-                                                <AlertDialogContent className="rounded-2xl border-slate-200">
+                                                <AlertDialogContent className="rounded-xl border-slate-200 shadow-xl">
                                                     <AlertDialogHeader>
                                                         <AlertDialogTitle className="font-bold text-slate-900">Delete Product</AlertDialogTitle>
                                                         <AlertDialogDescription className="text-slate-500 font-medium">

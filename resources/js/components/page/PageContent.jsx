@@ -71,7 +71,7 @@ export const PageContent = ({ page, isLoading }) => {
     if (!page) return <div> Page data not found. </div>;
 
     return (
-        <section className="mx-auto max-w-7xl w-full space-y-8 px-8 py-10">
+        <section className="mx-auto max-w-7xl w-full space-y-8 px-6 sm:px-8 py-10">
             <div className="flex items-center justify-between gap-5">
                 <h4 className="font-semibold"> Page Content </h4>
                 <Button

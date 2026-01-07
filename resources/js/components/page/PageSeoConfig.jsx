@@ -114,7 +114,7 @@ export const PageSeoConfig = ({ page }) => {
             data-slot="page-seo-config"
             className="@container/seo p-6"
         >
-            <div className="container flex max-w-4xl flex-col gap-y-5">
+            <div className="max-w-7xl mx-auto flex flex-col gap-y-5 px-6 sm:px-8">
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     whileInView={{ opacity: 1, y: 0 }}
