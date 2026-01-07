@@ -40,12 +40,20 @@ export const PageSeoConfig = ({ page }) => {
     const [keywords, setKeywords] = useState("");
 
     useEffect(() => {
-        if (page?.data?.seo) {
+        if (page?.seo) {
             setSeoData((prev) => ({
                 ...prev,
-                ...page.data.seo,
+                ...page.seo,
             }));
-            setKeywords(page.data.seo.keywords?.join(", ") || "");
+
+            const kw = page.seo.keywords;
+            if (Array.isArray(kw)) {
+                setKeywords(kw.join(", "));
+            } else if (typeof kw === "string") {
+                setKeywords(kw);
+            } else {
+                setKeywords("");
+            }
         }
     }, [page]);
 

@@ -9,39 +9,36 @@ class Product extends Model
     protected $fillable = [
         'title',
         'slug',
+        'thumbnail',
         'short_description',
         'description',
+        'origin',
+        'origin_details',
+        'brand',
+        'brand_details',
         'category_id',
-        'brand_id',
-        'price',
-        'discount_price',
-        'status',
-        'unit',
-        'color_name',
-        'color_code',
-        'color_index',
-        'shade',
-        'appearance',
-        'food_grade',
-        'fssai_compliant',
-        'fssai_number',
-        'fssai_expiry_date',
-        'fda_approved',
-        'halal_certified',
-        'kosher_certified',
-        'e_number',
-        'allergen_info',
-        'gmo_status',
+        'physical_form',
+        'stability',
+        'storage_conditions',
         'solubility',
-        'heat_stability',
-        'ph_stability_range',
-        'light_stability',
-        'dosage_recommendation',
-        'net_weight',
-        'net_volume',
-        'weight_unit',
-        'volume_unit',
+        'specific_gravity',
+        'flash_point',
+        'arsenic_content',
+        'heavy_metals',
+        'usage_rate',
+        'usages',
+        'status',
     ];
+
+    protected $casts = [
+        'usages' => 'array',
+        'status' => 'string',
+    ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     public function views(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {

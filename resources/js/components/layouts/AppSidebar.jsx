@@ -41,6 +41,18 @@ export const AppSidebar = () => {
             icon: "solar:box-bold",
         },
         {
+            id: "categories",
+            name: "Categories",
+            link: "/categories",
+            icon: "solar:layers-minimalistic-bold",
+        },
+        {
+            id: "brands",
+            name: "Brands",
+            link: "/brands",
+            icon: "solar:tag-bold",
+        },
+        {
             id: "pages",
             name: "Pages",
             link: "/pages",
@@ -50,7 +62,7 @@ export const AppSidebar = () => {
                 name: page.title,
                 link: `/pages/${page.slug}`,
                 icon: "solar:document-linear",
-            })),
+            })) || [],
         },
     ];
 

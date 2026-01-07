@@ -11,7 +11,7 @@ class UpdateSeoRequest extends FormRequest
    */
   public function authorize(): bool
   {
-    return $this->user() !== null;
+    return true;
   }
 
   /**
@@ -24,16 +24,16 @@ class UpdateSeoRequest extends FormRequest
     return [
       'title' => 'sometimes|required|string|max:255',
       'description' => 'nullable|string',
-      'keywords' => 'nullable|string',
+      'keywords' => 'nullable',
       'og_title' => 'nullable|string|max:255',
       'og_description' => 'nullable|string',
-      'og_image' => 'nullable|string|max:255',
+      'og_image' => 'nullable|string',
       'og_type' => 'nullable|string|max:50',
       'twitter_card' => 'nullable|string|max:50',
       'twitter_title' => 'nullable|string|max:255',
       'twitter_description' => 'nullable|string',
-      'twitter_image' => 'nullable|string|max:255',
-      'canonical_url' => 'nullable|url',
+      'twitter_image' => 'nullable|string',
+      'canonical_url' => 'nullable|string',
       'robots' => 'nullable|string|max:100',
     ];
   }

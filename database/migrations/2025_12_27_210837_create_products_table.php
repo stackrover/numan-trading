@@ -14,42 +14,35 @@ return new class extends Migration {
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->string('short_description', 255);
-            $table->text('description');
-            $table->integer('category_id')->nullable();
-            $table->integer('brand_id')->nullable();
-            $table->integer('price')->default(0);
-            $table->integer('discount_price')->nullable();
+            $table->string('thumbnail')->nullable();
+
+            $table->text('short_description')->nullable();
+            $table->longText('description')->nullable(); // For general rich text content
+
+            $table->string('origin')->nullable();
+            $table->text('origin_details')->nullable();
+
+            $table->string('brand')->nullable();
+            $table->text('brand_details')->nullable();
+
+            $table->unsignedBigInteger('category_id')->nullable()->index(); // Foreign key to categories
+
+            // Technical Specs
+            $table->string('physical_form')->nullable(); // e.g. Concentrated Emulsion
+            $table->string('stability')->nullable();
+            $table->string('storage_conditions')->nullable(); // e.g. 24month life
+
+            $table->string('solubility')->nullable(); // text or string
+            $table->string('specific_gravity')->nullable();
+            $table->string('flash_point')->nullable();
+            $table->string('arsenic_content')->nullable();
+            $table->string('heavy_metals')->nullable();
+
+            $table->string('usage_rate')->nullable(); // "use rule" e.g. 0.1% - 0.4% w/w
+
+            $table->json('usages')->nullable(); // { title: "", rate: "" }[]
+
             $table->enum('status', ['published', 'draft'])->default('draft');
-            $table->enum('unit', ['piece', 'kg', 'g', 'ml', 'l'])->default('piece');
-            $table->string('color_name')->nullable();
-            $table->string('color_code')->nullable();
-            $table->string('color_index')->nullable();
-            $table->enum('shade', ['light', 'dark', 'medium'])->default('medium');
-            $table->enum('appearance', ['powder', 'paste', 'liquid', 'solid'])->default('solid');
-
-            $table->boolean('food_grade')->nullable()->default(false);
-            $table->boolean('fssai_compliant')->nullable()->default(false);
-            $table->string('fssai_number')->nullable();
-            $table->string('fssai_expiry_date')->nullable();
-            $table->boolean('fda_approved')->nullable()->default(false);
-            $table->boolean('halal_certified')->nullable()->default(false);
-            $table->boolean('kosher_certified')->nullable()->default(false);
-            $table->string('e_number')->nullable();
-            $table->text('allergen_info')->nullable();
-            $table->enum('gmo_status', ['gmo', 'non-gmo'])->default('non-gmo');
-            $table->enum("solubility", ['water', 'oil', 'gas', 'solid', 'liquid', 'powder'])->default('solid');
-            $table->string('heat_stability')->nullable();
-            $table->string('ph_stability_range')->nullable();
-            $table->boolean('light_stability')->nullable()->default(false);
-            $table->string("dosage_recommendation")->nullable();
-
-            $table->string('net_weight')->nullable();
-            $table->string('net_volume')->nullable();
-            $table->enum('weight_unit', ['g', 'kg'])->default('g');
-            $table->enum('volume_unit', ['ml', 'l'])->default('ml');
-
-
             $table->timestamps();
         });
     }

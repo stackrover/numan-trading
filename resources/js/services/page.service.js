@@ -4,15 +4,15 @@ import { toast } from "sonner";
 
 
 export const PageApi = {
-  list: (queries) => axios.get("/pages", {
+  list: (queries) => axios.get("/v1/pages", {
     params: queries
   }).then(res => res.data),
-  get: (id) => axios.get(`/pages/${id}`).then(res => res.data),
-  create: (data) => axios.post("/pages", data).then(res => res.data),
-  update: (id, data) => axios.put(`/pages/${id}`, data).then(res => res.data),
-  delete: (id) => axios.delete(`/pages/${id}`).then(res => res.data),
+  get: (id) => axios.get(`/v1/pages/${id}`).then(res => res.data),
+  create: (data) => axios.post("/v1/pages", data).then(res => res.data),
+  update: (id, data) => axios.put(`/v1/pages/${id}`, data).then(res => res.data),
+  delete: (id) => axios.delete(`/v1/pages/${id}`).then(res => res.data),
   updateSeo: (slug, data) => {
-    return axios.put(`/pages/${slug}/seo`, data);
+    return axios.put(`/v1/pages/${slug}/seo`, data);
   },
 }
 
@@ -87,8 +87,8 @@ export const useUpdateSeoMutation = () => {
   return useMutation({
     mutationFn: ({ slug, data }) => PageApi.updateSeo(slug, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(PageKeys.lists());
-      toast.success("Page updated successfully");
+      queryClient.invalidateQueries(PageKeys.all);
+      toast.success("SEO settings updated successfully");
     }
   })
 }

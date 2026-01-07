@@ -3,10 +3,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const EnquiryApi = {
-    list: (params) => axios.get("/enquiries", { params }).then((res) => res.data),
-    get: (id) => axios.get(`/enquiries/${id}`).then((res) => res.data),
-    reply: (id, data) => axios.post(`/enquiries/${id}/reply`, data).then((res) => res.data),
-    delete: (id) => axios.delete(`/enquiries/${id}`).then((res) => res.data),
+    list: (params) => axios.get("/v1/enquiries", { params }).then((res) => res.data),
+    get: (id) => axios.get(`/v1/enquiries/${id}`).then((res) => res.data),
+    reply: (id, data) => axios.post(`/v1/enquiries/${id}/reply`, data).then((res) => res.data),
+    delete: (id) => axios.delete(`/v1/enquiries/${id}`).then((res) => res.data),
 };
 
 export const EnquiryKeys = {

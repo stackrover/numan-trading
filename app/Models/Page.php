@@ -29,9 +29,9 @@ class Page extends Model
         return $this->hasMany(Block::class);
     }
 
-    public function documents(): BelongsTo
+    public function document(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->belongsTo(Document::class);
+        return $this->hasOne(Document::class);
     }
 
     public function seo(): \Illuminate\Database\Eloquent\Relations\HasOne

@@ -2,7 +2,7 @@ import axios from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
 export const DashboardApi = {
-    getStats: () => axios.get("/dashboard/stats").then((res) => res.data),
+    getStats: () => axios.get("/dashboard").then((res) => res.data),
 };
 
 export const DashboardKeys = {

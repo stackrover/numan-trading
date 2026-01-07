@@ -12,20 +12,24 @@ return new class extends Migration {
     {
         Schema::create('seos', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('description');
-            $table->string('keywords');
-            $table->string('og_title')->nullable();
-            $table->string('og_description')->nullable();
-            $table->string('og_image')->nullable();
+            $table->string('title')->nullable();
+            $table->text('description')->nullable();
+            $table->text('keywords')->nullable();
+
+            // Open Graph
+            $table->text('og_title')->nullable();
+            $table->text('og_description')->nullable();
+            $table->longText('og_image')->nullable();
             $table->string('og_type')->nullable();
 
+            // Twitter
             $table->string('twitter_card')->nullable();
-            $table->string('twitter_title')->nullable();
-            $table->string('twitter_description')->nullable();
-            $table->string('twitter_image')->nullable();
+            $table->text('twitter_title')->nullable();
+            $table->text('twitter_description')->nullable();
+            $table->longText('twitter_image')->nullable();
 
-            $table->string('canonical_url')->nullable();
+            // Other
+            $table->text('canonical_url')->nullable();
             $table->string('robots')->nullable();
 
             $table->unsignedBigInteger('page_id')->index();

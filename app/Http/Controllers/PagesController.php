@@ -54,7 +54,12 @@ class PagesController extends Controller
      */
     public function show($slug)
     {
-        $page = Page::with("blocks", "blocks.fields", "seo")->where('slug', $slug)->firstOrFail();
+        $page = Page::with("blocks", "blocks.fields", "seo", "document")->where('slug', $slug)->firstOrFail();
+
+        if ($page->document) {
+            $page->document->hydrateMedia();
+        }
+
         return response()->json($page, 200);
     }
 
@@ -125,10 +130,15 @@ class PagesController extends Controller
     public function updateSeo(UpdateSeoRequest $request, $slug)
     {
         $page = Page::where('slug', $slug)->firstOrFail();
+        $data = $request->validated();
+
+        if (isset($data['keywords']) && is_array($data['keywords'])) {
+            $data['keywords'] = implode(', ', $data['keywords']);
+        }
 
         $seo = $page->seo()->updateOrCreate(
             ['page_id' => $page->id],
-            $request->validated()
+            $data
         );
 
         return response()->json($seo, 200);

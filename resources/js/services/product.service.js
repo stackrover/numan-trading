@@ -3,11 +3,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const ProductApi = {
-    list: (params) => axios.get("/products", { params }).then((res) => res.data),
-    get: (id) => axios.get(`/products/${id}`).then((res) => res.data),
-    create: (data) => axios.post("/products", data).then((res) => res.data),
-    update: (id, data) => axios.put(`/products/${id}`, data).then((res) => res.data),
-    delete: (id) => axios.delete(`/products/${id}`).then((res) => res.data),
+    list: (params) => axios.get("/v1/products", { params }).then((res) => res.data),
+    get: (id) => axios.get(`/v1/products/${id}`).then((res) => res.data),
+    create: (data) => axios.post("/v1/products", data).then((res) => res.data),
+    update: (id, data) => axios.put(`/v1/products/${id}`, data).then((res) => res.data),
+    delete: (id) => axios.delete(`/v1/products/${id}`).then((res) => res.data),
 };
 
 export const ProductKeys = {

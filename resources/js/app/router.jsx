@@ -52,6 +52,22 @@ export const router = createBrowserRouter([
                             return { Component: module.default };
                         },
                     },
+
+                    {
+                        path: "/categories",
+                        lazy: async () => {
+                            const module = await import("@/routes/Categories");
+                            return { Component: module.default };
+                        },
+                    },
+
+                    {
+                        path: "/brands",
+                        lazy: async () => {
+                            const module = await import("@/routes/Brands");
+                            return { Component: module.default };
+                        },
+                    },
                 ],
             },
 
