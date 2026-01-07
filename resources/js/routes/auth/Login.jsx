@@ -1,134 +1,108 @@
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormMessage, } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
 import { useLoginMutation } from "@/services/auth.service";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import z from "zod";
 import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Icon } from "@iconify-icon/react";
 
-const schema = z.object({
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+const loginSchema = z.object({
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(1, "Password is required"),
 });
 
 export default function Login() {
-    const { mutate: loginMutation, isPending } = useLoginMutation();
+    const { mutate: login, isPending } = useLoginMutation();
 
-    const form = useForm({
-        resolver: zodResolver(schema),
-        defaultValues: {
-            email: "",
-            password: "",
-        },
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(loginSchema),
     });
 
-    const onSubmit = form.handleSubmit(async (data) => {
-        loginMutation(data);
-    });
+    const onSubmit = (data) => {
+        login(data);
+    };
 
     return (
-        <div className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat relative"
-            style={{ backgroundImage: 'url("/images/login-bg.png")' }}>
-            {/* Overlay for better readability */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6 font-sans">
+            <div className="w-full max-w-[440px] space-y-8">
+                {/* Simple Logo */}
+                <div className="flex flex-col items-center justify-center space-y-4">
+                    <div className="size-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-sm">
+                        <span className="text-white text-3xl font-bold">N</span>
+                    </div>
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold text-slate-900">Sign in to Numan</h1>
+                        <p className="text-slate-500 mt-2 font-medium">Enter your credentials to access your account</p>
+                    </div>
+                </div>
 
-            <div className="relative z-10 w-full max-w-md p-2 px-4 sm:px-6">
-                <div
-                    className="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl rounded-2xl overflow-hidden">
-                    <Form {...form}>
-                        <form
-                            onSubmit={onSubmit}
-                            className="p-8 flex flex-col items-center space-y-6"
-                        >
-                            <div className="text-center w-full space-y-2">
-                                <div className="mx-auto w-16 h-16 bg-gradient-to-tr from-primary to-accent rounded-2xl rotate-12 flex items-center justify-center shadow-lg mb-6">
-                                    <span className="text-white text-3xl font-bold -rotate-12">N</span>
-                                </div>
-                                <h1 className="text-3xl font-bold text-white tracking-tight">Welcome Back</h1>
-                                <p className="text-white/60 text-sm">
-                                    Manage your colors & flavors dashboard
-                                </p>
+                <Card className="border-slate-200 shadow-sm rounded-2xl">
+                    <CardContent className="p-8">
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-sm font-semibold text-slate-700">Email Address</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="name@company.com"
+                                    {...register("email")}
+                                    className={`h-12 border-slate-200 focus:ring-slate-900 focus:border-slate-900 rounded-xl transition-all ${errors.email ? 'border-red-500' : ''}`}
+                                />
+                                {errors.email && (
+                                    <p className="text-xs font-medium text-red-500">{errors.email.message}</p>
+                                )}
                             </div>
 
-                            <div className="w-full space-y-4">
-                                <FormField
-                                    control={form.control}
-                                    name="email"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full">
-                                            <FormControl>
-                                                <div className="relative">
-                                                    <Input
-                                                        placeholder="Email Address"
-                                                        className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-12 focus:border-primary/50 transition-all rounded-xl"
-                                                        {...field}
-                                                    />
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage className="text-red-400" />
-                                        </FormItem>
-                                    )}
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="password" className="text-sm font-semibold text-slate-700">Password</Label>
+                                    <Link
+                                        to="/forgot-password"
+                                        className="text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+                                    >
+                                        Forgot?
+                                    </Link>
+                                </div>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    {...register("password")}
+                                    className={`h-12 border-slate-200 focus:ring-slate-900 focus:border-slate-900 rounded-xl transition-all ${errors.password ? 'border-red-500' : ''}`}
                                 />
-
-                                <FormField
-                                    control={form.control}
-                                    name="password"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full">
-                                            <FormControl>
-                                                <div className="relative">
-                                                    <Input
-                                                        type="password"
-                                                        placeholder="Password"
-                                                        className="bg-white/5 border-white/10 text-white placeholder:text-white/30 h-12 focus:border-primary/50 transition-all rounded-xl"
-                                                        {...field}
-                                                    />
-                                                </div>
-                                            </FormControl>
-                                            <div className="flex justify-end mt-1">
-                                                <Link
-                                                    to="/forgot-password"
-                                                    className="text-xs text-primary/80 hover:text-primary transition-colors"
-                                                >
-                                                    Forgot Password?
-                                                </Link>
-                                            </div>
-                                            <FormMessage className="text-red-400" />
-                                        </FormItem>
-                                    )}
-                                />
+                                {errors.password && (
+                                    <p className="text-xs font-medium text-red-500">{errors.password.message}</p>
+                                )}
                             </div>
 
                             <Button
-                                className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                                type="submit"
                                 disabled={isPending}
+                                className="w-full h-12 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all"
                             >
-                                {isPending ? (
-                                    <div className="flex items-center gap-2">
-                                        <Spinner className="w-4 h-4 text-white" />
-                                        <span>Signing in...</span>
-                                    </div>
-                                ) : (
-                                    "Sign In"
-                                )}
+                                {isPending ? "Signing in..." : "Continue"}
                             </Button>
-
-                            <div className="pt-4 text-center">
-                                <p className="text-sm text-white/40">
-                                    Don't have an account?{' '}
-                                    <Link
-                                        to="/register"
-                                        className="text-white hover:text-primary font-medium underline underline-offset-4 transition-colors"
-                                    >
-                                        Create account
-                                    </Link>
-                                </p>
-                            </div>
                         </form>
-                    </Form>
-                </div>
+                    </CardContent>
+                </Card>
+
+                {/* Footer Link */}
+                <p className="text-center text-sm text-slate-500 font-medium">
+                    Don't have an account?{" "}
+                    <Link
+                        to="/register"
+                        className="font-bold text-slate-900 hover:underline underline-offset-4"
+                    >
+                        Sign up
+                    </Link>
+                </p>
             </div>
         </div>
     );

@@ -153,38 +153,64 @@
     --input: #ffffff;
     --input-foreground: #0f172a;
 
-    --chart-1: #ff6b00;
+    /* Charts */
+    --chart-1: #4f46e5;
+    /* Soft Indigo */
     --chart-2: #10b981;
     --chart-3: #3b82f6;
     --chart-4: #8b5cf6;
     --chart-5: #f43f5e;
 
-    /* sidebar styles - Light & Ultra Premium */
+    /* sidebar styles - Classic & Comfortable */
     --sidebar: #ffffff;
     --sidebar-foreground: #64748b;
-    --sidebar-primary: var(--brand-primary);
+    --sidebar-primary: #4f46e5;
     --sidebar-primary-foreground: #ffffff;
     --sidebar-accent: #f8fafc;
-    --sidebar-active: #fff1e6;
-    /* Extremely soft orange */
-    --sidebar-active-foreground: var(--brand-primary);
+    --sidebar-active: #eef2ff;
+    --sidebar-active-foreground: #4f46e5;
     --sidebar-accent-foreground: #0f172a;
-    --sidebar-border: #f8fafc;
-    --sidebar-ring: var(--brand-primary);
+    --sidebar-border: #f1f5f9;
+    --sidebar-ring: #4f46e5;
 }
 
 @layer utilities {
     .glass {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        @apply bg-white/90 backdrop-blur-md border border-slate-200/50;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-dark {
+        @apply bg-slate-950/40 backdrop-blur-xl border border-white/5;
+        box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
     }
 
     .text-gradient {
-        background: linear-gradient(to right, var(--brand-primary), #ff9d00);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        @apply text-slate-900;
+    }
+
+    .text-gradient-orange {
+        @apply bg-clip-text text-transparent bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500;
+        background-clip: text;
+    }
+
+    /* Premium Texture Utilities */
+
+    /* Precision Motion Utility */
+    .soft-bounce {
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-primary {
+        @apply bg-[#4f46e5] hover:bg-[#4338ca] text-white font-medium h-12 px-6 rounded-xl shadow-sm transition-all;
+    }
+
+    .btn-secondary {
+        @apply bg-white hover:bg-slate-50 text-slate-700 font-medium h-12 px-6 rounded-xl border border-slate-200 shadow-sm transition-all;
+    }
+
+    .card-classic {
+        @apply bg-white border border-slate-200/60 rounded-2xl shadow-sm;
     }
 }
 
@@ -204,7 +230,8 @@ html::selection {
     }
 
     body {
-        @apply bg-canvas text-foreground;
+        @apply bg-background text-foreground font-sans antialiased;
+        letter-spacing: -0.015em;
     }
 
     h1,
@@ -214,6 +241,7 @@ html::selection {
     h5,
     h6 {
         @apply font-semibold;
+        letter-spacing: -0.04em;
     }
 
     h1 {

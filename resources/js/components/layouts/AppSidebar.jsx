@@ -4,21 +4,16 @@ import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarGroup,
-    SidebarGroupAction,
-    SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
-    SidebarMenuButton,
     SidebarMenuItem,
+    SidebarGroupLabel,
 } from "../ui/sidebar";
 import { PlusIcon, LogOut } from "lucide-react";
 import React from "react";
 import { CreatePageDialog } from "../page/CreatePageDialog";
 import { usePages } from "@/services/page.service";
 import { useLogoutMutation } from "@/services/auth.service";
-import { motion } from "motion/react";
 
 export const AppSidebar = () => {
     const [isOpenPageDialog, setIsOpenPageDialog] = React.useState(false);
@@ -29,15 +24,15 @@ export const AppSidebar = () => {
     const sidebarMenuItems = [
         {
             id: "dashboard",
-            name: "Overview",
+            name: "Dashboard",
             link: "/",
-            icon: "solar:widget-bold",
+            icon: "solar:widget-2-bold",
         },
         {
             id: "Enquiries",
             name: "Enquiries",
             link: "/enquiries",
-            icon: "solar:chat-round-dots-bold",
+            icon: "solar:chat-round-line-bold",
         },
         {
             id: "Products",
@@ -47,51 +42,52 @@ export const AppSidebar = () => {
         },
         {
             id: "pages",
-            name: "Website Pages",
+            name: "Pages",
             link: "/pages",
-            icon: "solar:file-text-bold",
+            icon: "solar:document-text-bold",
             children: pages?.data?.map((page) => ({
                 id: page.id,
                 name: page.title,
                 link: `/pages/${page.slug}`,
-                icon: "solar:document-text-linear",
+                icon: "solar:document-linear",
             })),
         },
     ];
 
     return (
-        <Sidebar variant="inset" className="border-r-0 bg-white/50 backdrop-blur-xl">
-            <SidebarHeader className="h-24 flex items-center px-8">
-                <Link to="/" className="flex items-center gap-4 group">
-                    <div className="size-12 bg-slate-950 rounded-2xl flex items-center justify-center border-2 border-slate-800 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300 shadow-xl shadow-orange-500/10">
-                        <span className="text-white text-2xl font-black">N</span>
+        <Sidebar variant="inset" className="border-r border-slate-100 bg-white">
+            <SidebarHeader className="h-20 flex items-center px-6 border-b border-slate-50">
+                <Link to="/" className="flex items-center gap-3">
+                    <div className="size-10 bg-slate-900 rounded-xl flex items-center justify-center shadow-sm">
+                        <span className="text-white text-xl font-bold">N</span>
                     </div>
                     <div>
-                        <h2 className="text-base font-black text-slate-950 leading-none tracking-tight">Numan</h2>
-                        <p className="text-[10px] text-orange-500 font-black uppercase tracking-[0.2em] mt-1.5 opacity-80">Colors & Flavors</p>
+                        <h2 className="text-sm font-bold text-slate-900 leading-none">Numan Trading</h2>
+                        <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest mt-1">Admin Panel</p>
                     </div>
                 </Link>
             </SidebarHeader>
 
-            <SidebarContent className="px-4 pt-4">
-                <SidebarMenu className="gap-1.5">
+            <SidebarContent className="px-3 pt-6">
+                <SidebarMenu className="gap-1">
                     {sidebarMenuItems.map((item) =>
                         item.children ? (
                             <div key={item.id} className="mb-6">
-                                <SidebarGroupLabel className="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3">
-                                    {item.name}
-                                </SidebarGroupLabel>
-
-                                <div className="space-y-1 relative">
+                                <div className="flex items-center justify-between px-3 mb-2">
+                                    <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 p-0 h-auto">
+                                        {item.name}
+                                    </SidebarGroupLabel>
                                     {item.id === "pages" && (
                                         <button
                                             onClick={() => setIsOpenPageDialog(true)}
-                                            className="absolute right-2 top-[-34px] size-6 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-orange-600 hover:border-orange-100 transition-all"
+                                            className="size-5 rounded-md bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all"
                                         >
-                                            <PlusIcon className="size-3.5" />
+                                            <PlusIcon className="size-3" />
                                         </button>
                                     )}
+                                </div>
 
+                                <div className="space-y-0.5">
                                     {item.children.map((subItem) => {
                                         const isActive = location.pathname === subItem.link;
                                         return (
@@ -99,18 +95,18 @@ export const AppSidebar = () => {
                                                 <Link
                                                     to={subItem.link}
                                                     className={`
-                                                        flex items-center gap-3 px-4 h-10 rounded-2xl text-sm font-bold transition-all duration-200
+                                                        flex items-center gap-3 px-3 h-9 rounded-lg text-sm font-medium transition-all
                                                         ${isActive
-                                                            ? "bg-slate-950 text-white shadow-lg shadow-slate-900/10"
-                                                            : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                                            ? "bg-indigo-50 text-indigo-700"
+                                                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                                                         }
                                                     `}
                                                 >
                                                     <Icon
                                                         icon={subItem.icon}
-                                                        className={`text-lg ${isActive ? "text-orange-400" : "opacity-40"}`}
+                                                        className={`text-lg opacity-60 ${isActive ? "text-indigo-600 opacity-100" : ""}`}
                                                     />
-                                                    <span>{subItem.name}</span>
+                                                    <span className="truncate">{subItem.name}</span>
                                                 </Link>
                                             </SidebarMenuItem>
                                         );
@@ -125,26 +121,20 @@ export const AppSidebar = () => {
                                         <Link
                                             to={item.link}
                                             className={`
-                                                flex items-center gap-4 px-4 h-12 rounded-2xl text-[13px] font-black transition-all duration-300
+                                                flex items-center gap-3 px-3 h-11 rounded-xl text-sm font-semibold transition-all
                                                 ${isActive
-                                                    ? "bg-slate-950 text-white shadow-xl shadow-slate-900/10 translate-x-1"
-                                                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                                    ? "bg-slate-900 text-white shadow-sm"
+                                                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                                                 }
                                             `}
                                         >
                                             <div className={`
-                                                size-8 rounded-xl flex items-center justify-center transition-all duration-300
-                                                ${isActive ? "bg-orange-500 text-white" : "bg-slate-50 text-slate-400 group-hover:bg-white"}
+                                                size-8 rounded-lg flex items-center justify-center transition-all
+                                                ${isActive ? "bg-indigo-500 text-white" : "bg-slate-50 text-slate-400"}
                                             `}>
-                                                <Icon icon={item.icon} className="text-lg" />
+                                                <Icon icon={item.icon} className="text-xl" />
                                             </div>
-                                            <span className="uppercase tracking-wider">{item.name}</span>
-                                            {isActive && (
-                                                <motion.div
-                                                    layoutId="activeIndicator"
-                                                    className="ml-auto size-1.5 rounded-full bg-orange-400"
-                                                />
-                                            )}
+                                            <span>{item.name}</span>
                                         </Link>
                                     );
                                 })()}
@@ -154,12 +144,12 @@ export const AppSidebar = () => {
                 </SidebarMenu>
             </SidebarContent>
 
-            <SidebarFooter className="p-6 border-t border-slate-50/50">
+            <SidebarFooter className="p-4 border-t border-slate-50">
                 <button
                     onClick={() => logout()}
-                    className="flex items-center gap-4 w-full h-12 px-4 rounded-2xl text-xs font-black text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all uppercase tracking-widest"
+                    className="flex items-center gap-3 w-full h-10 px-3 rounded-xl text-sm font-bold text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-all group"
                 >
-                    <div className="size-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-rose-100 group-hover:text-rose-600 transition-colors">
+                    <div className="size-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-rose-100 group-hover:text-rose-600 transition-all">
                         <LogOut className="size-4" />
                     </div>
                     <span>Sign Out</span>

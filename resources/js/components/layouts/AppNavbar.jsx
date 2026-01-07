@@ -37,44 +37,41 @@ export const Navbar = () => {
     const { leftContent, rightContent } = useNavbar();
 
     return (
-        <header className="h-20 flex items-center glass sticky top-0 z-30 border-b border-slate-200/50 px-8">
+        <header className="h-20 flex items-center bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200 px-6 sm:px-8">
             <div className="w-full">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-3">
                             {leftContent}
-                            <div className="h-6 w-[1px] bg-slate-200 hidden md:block mx-2"></div>
+                            <div className="h-6 w-[1px] bg-slate-200 hidden md:block mx-1"></div>
                             <div className="hidden lg:flex items-center gap-2 text-slate-400">
-                                <span className="text-[10px] font-black uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded-md">Admin</span>
+                                <Icon icon="solar:home-2-linear" className="text-lg" />
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Main Control</span>
                                 <Icon icon="solar:alt-arrow-right-linear" className="text-xs" />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Dashboard</span>
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-900">Current Node</span>
                             </div>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-4">
-                        {/* Search Mockup */}
-                        <div className="hidden md:flex items-center gap-3 px-4 h-11 rounded-2xl bg-slate-100/50 border border-slate-200/50 text-slate-400 w-64 group hover:bg-white hover:border-orange-200 transition-all cursor-text focus-within:ring-2 focus-within:ring-orange-500/10">
-                            <Icon icon="solar:magnifer-linear" className="text-lg group-hover:text-orange-500 transition-colors" />
-                            <span className="text-[11px] font-bold uppercase tracking-wider">Search Intel...</span>
-                            <div className="ml-auto flex items-center gap-1">
-                                <kbd className="text-[9px] font-black bg-white border border-slate-200 px-1.5 py-0.5 rounded-md text-slate-500">⌘</kbd>
-                                <kbd className="text-[9px] font-black bg-white border border-slate-200 px-1.5 py-0.5 rounded-md text-slate-500">K</kbd>
-                            </div>
+                        {/* Simple Search */}
+                        <div className="hidden md:flex items-center gap-2 px-3 h-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 w-64 group hover:bg-white transition-all cursor-text focus-within:ring-2 focus-within:ring-indigo-500/10">
+                            <Icon icon="solar:magnifer-linear" className="text-lg" />
+                            <span className="text-sm font-medium">Search records...</span>
                         </div>
 
-                        {/* Notifications Mockup */}
-                        <button className="size-11 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-orange-600 hover:border-orange-100 transition-all relative group">
-                            <Icon icon="solar:bell-bing-bold" className="text-xl group-hover:scale-110 transition-transform" />
-                            <span className="absolute top-3 right-3 size-2 rounded-full bg-orange-500 border-2 border-white ring-4 ring-orange-500/5 animte-pulse"></span>
+                        {/* Notifications */}
+                        <button className="size-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-100 transition-all relative">
+                            <Icon icon="solar:bell-linear" className="text-xl" />
+                            <span className="absolute top-2.5 right-2.5 size-2 rounded-full bg-indigo-600 border-2 border-white"></span>
                         </button>
 
                         <div className="h-6 w-[1px] bg-slate-200 mx-1"></div>
 
                         {rightContent || (
-                            <Button className="bg-slate-950 hover:bg-slate-800 text-white font-black h-11 px-6 rounded-2xl border border-slate-800 transition-all flex items-center gap-2 uppercase text-[11px] tracking-widest group">
-                                <Icon icon="solar:globus-bold" className="text-lg text-orange-400 group-hover:rotate-12 transition-transform" />
-                                <span>Visit Public Site</span>
+                            <Button className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-10 px-5 rounded-xl border border-slate-800 shadow-sm transition-all flex items-center gap-2 text-xs uppercase tracking-wider">
+                                <Icon icon="solar:globus-linear" className="text-lg" />
+                                <span>Visit Website</span>
                             </Button>
                         )}
                     </div>

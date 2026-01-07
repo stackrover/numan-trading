@@ -2,13 +2,12 @@ import { Icon } from "@iconify-icon/react";
 import React from "react";
 import { useParams, useNavigate } from "react-router";
 import { useEnquiry, useReplyEnquiry } from "@/services/enquiry.service";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AutosizeTextarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
-import { toast } from "sonner";
 import { motion } from "motion/react";
-import { PlusIcon, LogOut } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 
 export default function Inbox() {
     const { id } = useParams();
@@ -29,97 +28,105 @@ export default function Inbox() {
         );
     };
 
-    if (isLoading) return <div className="p-8 text-center font-bold text-slate-400 animate-pulse">Loading conversation...</div>;
-    if (!enquiry) return <div className="p-8 text-center text-rose-500 font-bold">Enquiry not found.</div>;
+    if (isLoading) return (
+        <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600"></div>
+        </div>
+    );
+
+    if (!enquiry) return (
+        <div className="p-20 text-center font-sans">
+            <Icon icon="solar:danger-bold" className="text-5xl text-rose-500 mb-4" />
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight">Record Not Found</h2>
+            <p className="text-slate-500 mt-2 font-medium">The requested enquiry could not be located.</p>
+            <Button onClick={() => navigate(-1)} className="mt-8 rounded-xl bg-slate-900 text-white font-bold h-11 px-8 shadow-sm">Return to Inbox</Button>
+        </div>
+    );
 
     return (
-        <div className="p-6 lg:p-10 space-y-10 max-w-5xl mx-auto">
-            <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="p-6 lg:p-10 space-y-10 max-w-5xl mx-auto font-sans">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <button
                         onClick={() => navigate(-1)}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 mb-4 text-slate-500 hover:text-slate-900 transition-all font-bold text-[11px] uppercase tracking-widest"
+                        className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-bold text-sm mb-4 transition-all"
                     >
-                        <PlusIcon className="size-4 rotate-45" />
-                        Back to Inbox
+                        <Icon icon="solar:alt-arrow-left-linear" className="text-xl" />
+                        Back to Enquiries
                     </button>
-                    <h1 className="text-4xl font-black text-slate-950 tracking-tight leading-none">Conversation Detail</h1>
-                    <p className="text-slate-500 font-medium mt-2">Internal record of client enquiry and response history.</p>
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Conversation Detail</h1>
+                    <p className="text-slate-500 font-medium mt-1 text-sm">Official record of client communication history.</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <span className="px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-lg text-[10px] font-black uppercase tracking-widest">Open Thread</span>
+                <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-full text-[10px] font-bold uppercase tracking-widest leading-none">Status: Open</span>
                 </div>
             </header>
 
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="grid gap-8"
-            >
-                {/* Original Message */}
-                <Card className="border border-slate-200/60 shadow-none bg-blue-50/20 rounded-[2rem] overflow-hidden">
-                    <CardHeader className="flex flex-row items-center justify-between p-8 pb-4">
-                        <div className="flex items-center gap-4">
-                            <div className="size-12 bg-slate-950 text-white flex items-center justify-center rounded-2xl font-black text-xl border border-slate-800 shadow-xl shadow-slate-900/10">
+            <div className="grid gap-8">
+                {/* Client Signal */}
+                <Card className="border-slate-200/60 shadow-none rounded-2xl overflow-hidden bg-white">
+                    <CardHeader className="flex flex-row items-center justify-between p-8 pb-6 border-b border-slate-50">
+                        <div className="flex items-center gap-5">
+                            <div className="size-14 bg-slate-900 text-white flex items-center justify-center rounded-xl font-bold text-xl shadow-sm">
                                 {enquiry.name.charAt(0)}
                             </div>
-                            <div>
-                                <CardTitle className="text-xl font-black text-slate-900 tracking-tight">{enquiry.name}</CardTitle>
-                                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">{enquiry.email}</p>
+                            <div className="flex flex-col">
+                                <CardTitle className="text-xl font-bold text-slate-900 tracking-tight">{enquiry.name}</CardTitle>
+                                <span className="text-xs text-slate-500 font-semibold">{enquiry.email}</span>
                             </div>
                         </div>
                         <div className="text-right">
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Received On</span>
-                            <span className="text-xs text-slate-900 font-bold">
-                                {format(new Date(enquiry.created_at), 'MMM dd, yyyy HH:mm')}
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Timestamp</span>
+                            <span className="text-xs text-slate-800 font-bold">
+                                {format(new Date(enquiry.created_at), 'MMMM dd, yyyy // HH:mm')}
                             </span>
                         </div>
                     </CardHeader>
-                    <CardContent className="p-8 pt-4">
-                        <div className="bg-white p-8 rounded-3xl border border-blue-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-                            <h4 className="font-black text-slate-900 text-lg mb-4 tracking-tight border-b border-slate-50 pb-4">{enquiry.subject}</h4>
-                            <p className="text-slate-600 leading-relaxed font-medium whitespace-pre-wrap">{enquiry.message}</p>
+                    <CardContent className="p-8">
+                        <div className="space-y-6">
+                            <div className="p-6 rounded-xl bg-slate-50 border border-slate-100">
+                                <h4 className="font-bold text-slate-900 text-base mb-3 border-b border-slate-200/60 pb-3">{enquiry.subject}</h4>
+                                <p className="text-slate-700 leading-relaxed font-medium whitespace-pre-wrap">{enquiry.message}</p>
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
 
-                {/* Reply Form */}
-                <Card className="border border-slate-200/60 shadow-none bg-white rounded-[2rem] overflow-hidden">
-                    <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-8">
-                        <CardTitle className="text-sm font-black flex items-center gap-3 text-slate-900 uppercase tracking-widest">
-                            <div className="size-8 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600">
-                                <Icon icon="solar:reply-2-bold" width="20" />
-                            </div>
-                            Compose Official Response
+                {/* Reply Section */}
+                <Card className="border-slate-200/60 shadow-none rounded-2xl overflow-hidden bg-slate-50/20">
+                    <CardHeader className="p-8 pb-4 border-b border-white/40">
+                        <CardTitle className="text-sm font-bold flex items-center gap-3 text-slate-900 uppercase tracking-widest">
+                            <Icon icon="solar:reply-2-linear" className="text-xl text-indigo-600" />
+                            Compose Response
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-8 space-y-6">
                         <AutosizeTextarea
-                            placeholder="Type your response here..."
+                            placeholder="Type your official response here..."
                             value={replyMessage}
                             onChange={(e) => setReplyMessage(e.target.value)}
-                            className="min-h-[200px] bg-slate-50/30 border-slate-200/60 focus:bg-white transition-all rounded-2xl p-6 font-medium text-slate-700 placeholder:text-slate-300"
+                            className="min-h-[200px] bg-white border-slate-200 rounded-xl p-6 font-medium text-slate-800 placeholder:text-slate-300 shadow-sm transition-all focus:border-indigo-500"
                         />
-                        <div className="flex justify-end gap-3">
+                        <div className="flex justify-end gap-3 pt-2">
                             <Button
                                 variant="outline"
                                 onClick={() => navigate(-1)}
-                                className="rounded-2xl px-8 h-12 font-black uppercase tracking-widest text-[11px] border-slate-200 text-slate-400 hover:text-slate-600"
+                                className="rounded-xl px-6 h-11 font-bold text-xs uppercase tracking-wider border-slate-200 text-slate-500 hover:text-slate-700 transition-all shadow-sm"
                             >
                                 Discard
                             </Button>
                             <Button
                                 onClick={handleReply}
                                 disabled={isPending || !replyMessage.trim()}
-                                className="bg-slate-950 hover:bg-slate-800 text-white font-black h-12 px-10 rounded-2xl border border-slate-800 transition-all flex items-center gap-3 uppercase text-[11px] tracking-widest"
+                                className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-11 px-8 rounded-xl transition-all flex items-center gap-2 text-xs uppercase tracking-wider shadow-sm"
                             >
-                                {isPending ? "Transmitting..." : "Send Response"}
-                                <Icon icon="solar:plain-2-bold" width="20" className="text-orange-400" />
+                                {isPending ? "Sending..." : "Send Response"}
+                                <Icon icon="solar:plain-linear" className="text-lg" />
                             </Button>
                         </div>
                     </CardContent>
                 </Card>
-            </motion.div>
+            </div>
         </div>
     );
 }
