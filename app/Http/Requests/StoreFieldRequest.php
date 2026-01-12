@@ -30,13 +30,14 @@ class StoreFieldRequest extends FormRequest
             'options' => 'nullable|array',
             'options.*' => 'string|max:255',
             'validation' => 'nullable|array',
-            'default_value' => 'nullable|string|max:255',
+            'default_value' => 'nullable|string|max:1000',
             'is_required' => 'nullable|boolean',
             'has_many' => 'nullable|boolean',
             'relation_model' => 'nullable|string|max:255',
             'placeholder' => 'nullable|string|max:255',
             'help_text' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'layout' => 'nullable|string|max:255',
         ];
     }
 }

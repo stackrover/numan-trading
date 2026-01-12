@@ -26,7 +26,7 @@ class Page extends Model
 
     public function blocks(): HasMany
     {
-        return $this->hasMany(Block::class);
+        return $this->hasMany(Block::class)->oldest();
     }
 
     public function document(): \Illuminate\Database\Eloquent\Relations\HasOne

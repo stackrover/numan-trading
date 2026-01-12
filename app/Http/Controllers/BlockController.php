@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBlockRequest;
 use App\Http\Requests\UpdateBlockRequest;
 use App\Models\Block;
+use App\Models\Page;
 use Illuminate\Http\Request;
 
 class BlockController extends Controller
@@ -17,22 +18,15 @@ class BlockController extends Controller
         ]);
 
         $pageSlug = $request->input('page_slug');
-        $blocks = $block->where('page_slug', $pageSlug)->get();
+        $page = Page::where('slug', $pageSlug)->firstOrFail();
+        $blocks = $block->where('page_id', $page->id)->get();
         return response()->json($blocks);
     }
 
     /** fetch a single block by slug and page slug */
-    public function show(Request $request, Block $block, $slug)
+    public function show(Block $block, $slug)
     {
-        $request->validate([
-            'page_slug' => 'required|string|exists:pages,slug',
-        ]);
-
-        $pageSlug = $request->input('page_slug');
-        $block = $block->where('slug', $slug)->where(
-            'page_slug',
-            $pageSlug
-        )->firstOrFail();
+        $block = $block->where('slug', $slug)->firstOrFail();
         return response()->json($block);
     }
 

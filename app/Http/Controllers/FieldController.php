@@ -6,6 +6,7 @@ use App\Http\Requests\StoreFieldRequest;
 use App\Http\Requests\UpdateFieldRequest;
 use App\Models\Field;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class FieldController extends Controller
 {
@@ -41,6 +42,28 @@ class FieldController extends Controller
     {
         return response()->json($field);
     }
+
+    /**
+     * Get fields by block slug or ID.
+     */
+    public function getByBlock($block_slug_or_id)
+    {
+        $fieldQuery = Field::query();
+
+        if (is_numeric($block_slug_or_id)) {
+            // If it's numeric, treat it as block ID
+            $fieldQuery->where('block_id', $block_slug_or_id);
+        } else {
+            // Otherwise, treat it as block slug
+            $fieldQuery->whereHas('block', function ($query) use ($block_slug_or_id) {
+                $query->where('slug', $block_slug_or_id);
+            });
+        }
+
+        $fields = $fieldQuery->get();
+        return response()->json($fields->pluck('default_value', 'name'));
+    }
+
 
     /**
      * Update the specified resource in storage.

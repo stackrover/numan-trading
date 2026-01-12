@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { TiptapEditor } from "@/components/ui/editor/Editor";
 import {
     Form,
     FormControl,
@@ -10,8 +9,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { TiptapEditor } from "@/components/ui/editor/Editor";
-import { UploadOrSelectMedia } from "@/components/uploadOrSelectMedia";
 import {
     Select,
     SelectContent,
@@ -19,9 +16,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { UploadOrSelectMedia } from "@/components/uploadOrSelectMedia";
 import { useCategories, useCreateCategory, useUpdateCategory } from "@/services/category.service";
 import { useMedia } from "@/services/media.service";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 export const CategoryForm = ({ category, onSuccess, onCancel }) => {
     const isEdit = !!category;
@@ -44,6 +44,8 @@ export const CategoryForm = ({ category, onSuccess, onCancel }) => {
             parent_id: category?.parent_id ? String(category.parent_id) : "null",
         },
     });
+
+    console.log(form.getValues(), category)
 
     const watchTitle = form.watch("title");
 

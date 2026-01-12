@@ -1,6 +1,8 @@
+import { cn } from "@/lib/utils";
+import { useMedia, useUploadMedia } from "@/services/media.service";
+import { Icon } from "@iconify-icon/react";
 import React from "react";
 import { useDropzone } from "react-dropzone";
-import { Icon } from "@iconify-icon/react";
 import { Button } from "./ui/button";
 import {
     Dialog,
@@ -10,8 +12,6 @@ import {
     DialogTrigger,
 } from "./ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { useMedia, useUploadMedia } from "@/services/media.service";
-import { cn } from "@/lib/utils";
 
 export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => {
     const [open, setOpen] = React.useState(false);
@@ -71,7 +71,7 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => 
                                 className="w-full h-48 object-cover"
                             />
                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <Button variant="secondary" size="sm">
+                                <Button type="button" size="sm">
                                     <Icon icon="solar:pen-linear" width="16" className="mr-2" />
                                     Change Media
                                 </Button>
@@ -169,7 +169,7 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => 
                             <div className="space-y-4">
                                 <div className="grid grid-cols-4 gap-4">
                                     {mediaList.map((media) => (
-                                        <div
+                                        <button
                                             key={media.id}
                                             onClick={() => setSelectedMedia(media)}
                                             className={cn(
@@ -189,7 +189,7 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => 
                                                     <Icon icon="solar:check-circle-bold" width="20" />
                                                 </div>
                                             )}
-                                        </div>
+                                        </button>
                                     ))}
                                 </div>
 

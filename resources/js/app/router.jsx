@@ -1,7 +1,7 @@
-import { createBrowserRouter } from "react-router";
-import RootLayout from "@/components/layouts/RootLayout";
-import ProtectedRoutesLayout from "@/components/layouts/ProtectedRoutesLayout";
 import AuthRoutesLayout from "@/components/layouts/AuthRoutesLayout";
+import ProtectedRoutesLayout from "@/components/layouts/ProtectedRoutesLayout";
+import RootLayout from "@/components/layouts/RootLayout";
+import { createBrowserRouter } from "react-router";
 
 export const router = createBrowserRouter([
     {
@@ -49,6 +49,29 @@ export const router = createBrowserRouter([
                         path: "/products",
                         lazy: async () => {
                             const module = await import("@/routes/Products");
+                            return { Component: module.default };
+                        },
+                    },
+                    {
+                        path: "/testimonials",
+                        lazy: async () => {
+                            const module = await import("@/routes/Testimonials");
+                            return { Component: module.default };
+                        },
+                    },
+
+                    {
+                        path: "/partners",
+                        lazy: async () => {
+                            const module = await import("@/routes/Partners");
+                            return { Component: module.default };
+                        },
+                    },
+
+                    {
+                        path: "/gallery",
+                        lazy: async () => {
+                            const module = await import("@/routes/Gallery");
                             return { Component: module.default };
                         },
                     },

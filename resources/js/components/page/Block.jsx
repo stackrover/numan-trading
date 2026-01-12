@@ -1,15 +1,7 @@
-import React from "react";
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from "../ui/collapsible";
+import { useDeleteBlock } from "@/services/block.service";
 import { Icon } from "@iconify-icon/react";
 import { AnimatePresence, motion } from "motion/react";
-import { Button } from "../ui/button";
-import { FieldRenderer } from "./FieldRenderer";
-import { ConfigFieldDialog } from "./ConfigFieldDialog";
-import { useDeleteBlock } from "@/services/block.service";
+import React from "react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -20,6 +12,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "../ui/alert-dialog";
+import { Button } from "../ui/button";
+import { FieldRenderer } from "./FieldRenderer";
 
 export const Block = ({
     block,
@@ -34,6 +28,8 @@ export const Block = ({
     const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
     const { mutate: deleteBlock, isPending: isDeleting } = useDeleteBlock();
 
+    console.log(block)
+
     if (!block) return null;
 
     const handleDeleteBlock = () => {
@@ -45,13 +41,13 @@ export const Block = ({
     };
 
     return (
-        <div className="bg-secondary group/block rounded-lg border hover:border-foreground/10 transition-border duration-200 w-full">
+        <div className="bg-background group/block rounded-lg border hover:border-foreground/10 transition-border duration-200 w-full">
             <div
                 role="button"
                 onClick={() => setIsOpen(!isOpen)}
                 onKeyDown={() => setIsOpen(!isOpen)}
                 tabIndex={0}
-                className="flex items-center gap-4 p-4 rounded-lg hover:bg-accent w-full text-left focus-visible:ring-2 ring-foreground/10 cursor-pointer"
+                className="flex items-center gap-4 p-4 rounded-lg hover:bg-white w-full text-left focus-visible:ring-2 ring-foreground/10 cursor-pointer"
             >
                 <div className="w-14 h-14 flex items-center bg-foreground/5 rounded-md justify-center text-foreground/40">
                     <Icon

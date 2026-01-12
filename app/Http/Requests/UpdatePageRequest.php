@@ -25,6 +25,7 @@ class UpdatePageRequest extends FormRequest
       "title" => "nullable|string|max:255",
       "slug" => "nullable|string|max:255|unique:pages,slug," . $this->page->id,
       'published_at' => 'nullable|date',
+      'icon' => 'nullable|string|max:255',
     ];
   }
 }

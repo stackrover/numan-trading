@@ -12,10 +12,10 @@ return new class extends Migration {
     {
         Schema::create('testimonials', function (Blueprint $table) {
             $table->id();
-            $table->string('author_name');
-            $table->string('author_position')->nullable();
-            $table->text('content');
-            $table->string('author_image')->nullable();
+            $table->string('name');
+            $table->string('company')->nullable();
+            $table->text('review');
+            $table->string('image')->nullable();
             $table->integer('rating')->nullable();
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_active')->default(false);

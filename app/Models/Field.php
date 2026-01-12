@@ -25,6 +25,7 @@ class Field extends Model
         'placeholder',
         'help_text',
         'description',
+        'layout',
     ];
 
     protected $hidden = [];

@@ -1,12 +1,12 @@
+import { useDocuments, useSavePageDocument } from "@/services/document.service";
 import { Icon } from "@iconify-icon/react";
-import { Button } from "../ui/button";
 import { motion } from "motion/react";
-import { ConfigBlockDialog } from "./ConfigBlockDialog";
 import React from "react";
-import { Block } from "./Block";
+import { Button } from "../ui/button";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "../ui/empty";
+import { Block } from "./Block";
+import { ConfigBlockDialog } from "./ConfigBlockDialog";
 import { ConfigFieldDialog } from "./ConfigFieldDialog";
-import { useSavePageDocument, useDocuments } from "@/services/document.service";
 
 export const PageContent = ({ page, isLoading }) => {
     const [editBlock, setEditBlock] = React.useState(null);
@@ -75,7 +75,6 @@ export const PageContent = ({ page, isLoading }) => {
             <div className="flex items-center justify-between gap-5">
                 <h4 className="font-semibold"> Page Content </h4>
                 <Button
-                    variant="secondary"
                     onClick={handleSave}
                     disabled={isSaving}
                 >

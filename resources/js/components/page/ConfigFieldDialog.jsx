@@ -1,13 +1,18 @@
-import React from "react";
+import { useCreateField, useUpdateField } from "@/services/field.service";
+import { Icon } from "@iconify-icon/react";
+import { Plus, Trash } from "lucide-react";
+import { useEffect } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { Button } from "../ui/button";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
 } from "../ui/dialog";
-import { useFieldArray, useForm } from "react-hook-form";
+import { TiptapEditor } from "../ui/editor/Editor";
 import {
     Form,
     FormControl,
@@ -25,12 +30,7 @@ import {
     SelectValue,
 } from "../ui/select";
 import { Switch } from "../ui/switch";
-import { useCreateField, useUpdateField } from "@/services/field.service";
-import { Button } from "../ui/button";
-import { Plus, Trash } from "lucide-react";
-import { Icon } from "@iconify-icon/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { TiptapEditor } from "../ui/editor/Editor";
 
 export const ConfigFieldDialog = ({
     open,
@@ -65,7 +65,7 @@ export const ConfigFieldDialog = ({
                     label: "",
                     name: "",
                     type: "text",
-                    is_required: false,
+                    is_required: true,
                     has_many: false,
                     default_value: "",
                     options: [],
@@ -78,7 +78,44 @@ export const ConfigFieldDialog = ({
                 },
     });
 
+    useEffect(() => {
+        if(editMode && defaultValues){
+            form.reset({
+                label: defaultValues.label || "",
+                name: defaultValues.name || "",
+                type: defaultValues.type || "text",
+                is_required: defaultValues.is_required || false,
+                has_many: defaultValues.has_many || false,
+                default_value: defaultValues.default_value || "",
+                options: defaultValues.options || [],
+                placeholder: defaultValues.placeholder || "",
+                description: defaultValues.description || "",
+                help_text: defaultValues.help_text || "",
+                relation_model: defaultValues.relation_model || "",
+                layout: defaultValues.layout || "12",
+                order: defaultValues.order || 0,
+            });
+        } else {
+            form.reset({
+                label: "",
+                name: "",
+                type: "text",
+                is_required: true,
+                has_many: false,
+                default_value: "",
+                options: [],
+                placeholder: "",
+                description: "",
+                help_text: "",
+                relation_model: "",
+                layout: "12",
+                order: 0,
+            });
+        }
+    }, [editMode, defaultValues]);
+
     const formData = form.watch();
+
     const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: "options",
@@ -89,6 +126,8 @@ export const ConfigFieldDialog = ({
             ...data,
             block_id: blockId,
         };
+
+        console.log({editMode, fieldData})
 
         const action = editMode ? updateField : createField;
         const payload = editMode ? { fieldId, fieldData } : fieldData;
@@ -261,8 +300,9 @@ export const ConfigFieldDialog = ({
                                                                         <SelectValue placeholder="Select model..." />
                                                                     </SelectTrigger>
                                                                     <SelectContent className="rounded-xl border-indigo-200">
-                                                                        <SelectItem value="testimonials">Testimonials Archive</SelectItem>
-                                                                        <SelectItem value="faqs">Knowledge Base (FAQs)</SelectItem>
+                                                                        <SelectItem value="testimonials">Testimonials</SelectItem>
+                                                                        <SelectItem value="faqs">FAQs</SelectItem>
+                                                                        <SelectItem value="partners">Partners</SelectItem>
                                                                     </SelectContent>
                                                                 </Select>
                                                             </FormControl>

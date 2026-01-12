@@ -22,10 +22,10 @@ class UpdateTestimonialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'author_name' => 'string|max:255',
-            'author_position' => 'nullable|string|max:255',
-            'content' => 'string',
-            'author_image' => 'nullable|string',
+            'name' => 'string|max:255',
+            'company' => 'nullable|string|max:255',
+            'review' => 'string',
+            'image' => 'nullable|string',
             'rating' => 'nullable|integer|min:1|max:5',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',

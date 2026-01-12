@@ -9,13 +9,12 @@ class Testimonial extends Model
     protected $table = "testimonials";
 
     protected $fillable = [
-        "author_name",
-        "author_position",
-        "content",
-        "author_image",
+        "name",
+        "company",
+        "review",
+        "image",
         "rating",
         "is_featured",
         "is_active",
     ];
 }
-

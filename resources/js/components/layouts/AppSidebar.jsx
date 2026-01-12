@@ -1,19 +1,19 @@
+import { useLogoutMutation } from "@/services/auth.service";
+import { usePages } from "@/services/page.service";
 import { Icon } from "@iconify-icon/react";
+import { LogOut, PlusIcon } from "lucide-react";
+import React from "react";
 import { Link, useLocation } from "react-router";
+import { CreatePageDialog } from "../page/CreatePageDialog";
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
+    SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuItem,
-    SidebarGroupLabel,
 } from "../ui/sidebar";
-import { PlusIcon, LogOut } from "lucide-react";
-import React from "react";
-import { CreatePageDialog } from "../page/CreatePageDialog";
-import { usePages } from "@/services/page.service";
-import { useLogoutMutation } from "@/services/auth.service";
 
 export const AppSidebar = () => {
     const [isOpenPageDialog, setIsOpenPageDialog] = React.useState(false);
@@ -53,7 +53,23 @@ export const AppSidebar = () => {
             icon: "solar:tag-bold",
         },
         {
-            id: "pages",
+            id: "testimonials",
+            name: "Testimonials",
+            link: "/testimonials",
+            icon: "solar:stars-minimalistic-bold",
+        },
+        {
+            id: "partners",
+            name: "Partners",
+            link: "/partners",
+            icon: "solar:case-round-minimalistic-bold",
+        },
+        {            id: "gallery",
+            name: "Gallery",
+            link: "/gallery",
+            icon: "solar:gallery-bold",
+        },
+        {            id: "pages",
             name: "Pages",
             link: "/pages",
             icon: "solar:document-text-bold",
