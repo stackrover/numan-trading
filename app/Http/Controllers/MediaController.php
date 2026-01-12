@@ -45,16 +45,31 @@ class MediaController extends Controller
         $path = $file->storeAs('uploads', $filename, 'public');
 
         // 3. Image Dimensions & Placeholder
-        $manager = new ImageManager(new Driver());
-        $image = $manager->read($file->getRealPath());
-        $width = $image->width();
-        $height = $image->height();
+        $width = null;
+        $height = null;
+        $placeholder = null;
 
-        // Generate Placeholder (20px width, blur, base64)
-        $placeholder = $image->scale(width: 20)
-            ->blur(5)
-            ->toPng()
-            ->toDataUri();
+        if ($mimeType === 'image/svg+xml' || $extension === 'svg') {
+            // Skip processing for SVG
+            // Optionally parse XML for width/height, but for now leave null
+        } else {
+            try {
+                $manager = new ImageManager(new Driver());
+                $image = $manager->read($file->getRealPath());
+                $width = $image->width();
+                $height = $image->height();
+
+                // Generate Placeholder (20px width, blur, base64)
+                $placeholder = $image->scale(width: 20)
+                    ->blur(5)
+                    ->toPng()
+                    ->toDataUri();
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('Image processing failed for file: ' . $filename, [
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
 
         // 4. Create Media Record
         $media = Media::create([

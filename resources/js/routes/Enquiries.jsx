@@ -25,7 +25,7 @@ export default function Enquiries() {
         <div className="p-6 lg:p-10 space-y-8 max-w-7xl mx-auto font-sans">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Customer Enquiries</h1>
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Customer Inquiries</h1>
                     <p className="text-slate-500 font-medium mt-1 text-sm">Review and respond to incoming customer messages.</p>
                 </div>
 
@@ -46,7 +46,7 @@ export default function Enquiries() {
                     <TableHeader>
                         <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
                             <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Sender Info</TableHead>
-                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Subject Message</TableHead>
+                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Product / Subject</TableHead>
                             <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400 w-[180px]">Status</TableHead>
                             <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400 w-[150px]">Received</TableHead>
                             <TableHead className="text-right px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400 w-[120px]">Actions</TableHead>
@@ -72,10 +72,20 @@ export default function Enquiries() {
                                         <div className="flex flex-col">
                                             <span className="text-sm font-bold text-slate-900">{enquiry.name}</span>
                                             <span className="text-xs text-slate-500 font-medium">{enquiry.email}</span>
+                                            {enquiry.company && (
+                                                <span className="text-[10px] text-slate-400 font-medium mt-0.5">{enquiry.company}</span>
+                                            )}
                                         </div>
                                     </TableCell>
                                     <TableCell className="px-6 border-t-0">
-                                        <span className="text-sm text-slate-700 font-medium line-clamp-1">{enquiry.subject}</span>
+                                        <div className="flex flex-col gap-0.5">
+                                            {enquiry.product && (
+                                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded w-fit mb-1">
+                                                    {enquiry.product.title}
+                                                </span>
+                                            )}
+                                            <span className="text-sm text-slate-700 font-medium line-clamp-1">{enquiry.subject}</span>
+                                        </div>
                                     </TableCell>
                                     <TableCell className="px-6 border-t-0">
                                         <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${getStatusStyle(enquiry.status)}`}>

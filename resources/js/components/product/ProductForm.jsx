@@ -25,6 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCategories } from "@/services/category.service";
 import { useBrands } from "@/services/brand.service";
 import { useCreateProduct, useUpdateProduct } from "@/services/product.service";
+import { useMedia } from "@/services/media.service";
 import { Check, ChevronsUpDown, Loader2, Plus, PlusCircle, Trash2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -58,6 +59,9 @@ export const ProductForm = ({ product, onSuccess, onCancel }) => {
     // Category fetch
     const { data: categoriesData, refetch: refetchCategories } = useCategories({ limit: 100 });
     const categories = categoriesData?.data || [];
+
+    // Media fetch for thumbnail resolution
+    const { data: mediaList } = useMedia();
 
     // Brand fetch
     const { data: brandsData, refetch: refetchBrands } = useBrands({ limit: 100 });
@@ -115,8 +119,25 @@ export const ProductForm = ({ product, onSuccess, onCancel }) => {
     }, [watchTitle, isEdit, form]);
 
     const onSubmit = (data) => {
+        let thumbnail = data.thumbnail;
+        // Resolve thumbnail object (or ID) to URL string if needed
+        if (thumbnail && mediaList) {
+            if (typeof thumbnail === "object") {
+                if (thumbnail.url) {
+                    thumbnail = thumbnail.url;
+                } else if (thumbnail.id) {
+                    const media = mediaList.find(m => m.id === thumbnail.id);
+                    if (media) thumbnail = media.url;
+                }
+            } else if (typeof thumbnail === "number") {
+                const media = mediaList.find(m => m.id === thumbnail);
+                if (media) thumbnail = media.url;
+            }
+        }
+
         const payload = {
             ...data,
+            thumbnail,
             category_id: data.category_id === "null" ? null : data.category_id,
         };
 

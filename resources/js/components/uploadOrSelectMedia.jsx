@@ -31,7 +31,7 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => 
 
             uploadMedia(formData, {
                 onSuccess: (data) => {
-                    onChange?.({ type: "media", id: data.id });
+                    onChange?.({ type: "media", id: data.id, url: data.url });
                     setOpen(false);
                 },
             });
@@ -47,7 +47,7 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => 
     // Handle media selection
     const handleSelectMedia = () => {
         if (selectedMedia) {
-            onChange?.({ type: "media", id: selectedMedia.id });
+            onChange?.({ type: "media", id: selectedMedia.id, url: selectedMedia.url });
             setOpen(false);
         }
     };

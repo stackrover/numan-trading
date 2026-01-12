@@ -22,7 +22,7 @@ class StoreMediaRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'file' => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:102400', // 100MB = 102400 KB
+      'file' => 'required|image|mimes:jpeg,jpg,png,gif,webp,svg,avif|max:102400', // 100MB = 102400 KB
     ];
   }
 
@@ -31,7 +31,7 @@ class StoreMediaRequest extends FormRequest
     return [
       'file.required' => 'Please select a file to upload.',
       'file.file' => 'The uploaded file is invalid.',
-      'file.mimes' => 'Only image files are supported. Allowed formats: JPEG, JPG, PNG, GIF, WEBP.',
+      'file.mimes' => 'Only image files are supported. Allowed formats: JPEG, JPG, PNG, GIF, WEBP, SVG, AVIF.',
       'file.max' => 'The file size must not exceed 100MB.',
     ];
   }

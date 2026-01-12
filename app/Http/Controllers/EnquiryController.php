@@ -13,7 +13,7 @@ class EnquiryController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Enquiry::query();
+        $query = Enquiry::with('product');
 
         if ($search = $request->input('search')) {
             $query->where('name', 'like', "%{$search}%")
