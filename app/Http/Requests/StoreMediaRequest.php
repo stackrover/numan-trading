@@ -22,7 +22,7 @@ class StoreMediaRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'file' => 'required|image|mimes:jpeg,jpg,png,gif,webp,svg,avif|max:102400', // 100MB = 102400 KB
+      'file' => 'required|file|mimes:jpeg,jpg,png,gif,webp,svg,avif,mp4,webm,ogg,mov,qt,avi|max:102400', // 100MB = 102400 KB
     ];
   }
 
@@ -31,8 +31,9 @@ class StoreMediaRequest extends FormRequest
     return [
       'file.required' => 'Please select a file to upload.',
       'file.file' => 'The uploaded file is invalid.',
-      'file.mimes' => 'Only image files are supported. Allowed formats: JPEG, JPG, PNG, GIF, WEBP, SVG, AVIF.',
+      'file.mimes' => 'Only image and video files are supported. Allowed formats: JPEG, JPG, PNG, GIF, WEBP, SVG, AVIF, MP4, WEBM, OGG, MOV, AVI.',
       'file.max' => 'The file size must not exceed 100MB.',
+      'file.uploaded' => 'The file failed to upload. It may remain larger than the server allows.',
     ];
   }
   protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

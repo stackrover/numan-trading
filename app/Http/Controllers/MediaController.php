@@ -49,10 +49,8 @@ class MediaController extends Controller
         $height = null;
         $placeholder = null;
 
-        if ($mimeType === 'image/svg+xml' || $extension === 'svg') {
-            // Skip processing for SVG
-            // Optionally parse XML for width/height, but for now leave null
-        } else {
+        // processing for image
+        if (str_starts_with($mimeType, 'image/') && $mimeType !== 'image/svg+xml' && $extension !== 'svg') {
             try {
                 $manager = new ImageManager(new Driver());
                 $image = $manager->read($file->getRealPath());

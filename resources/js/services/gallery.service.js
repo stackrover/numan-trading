@@ -9,6 +9,7 @@ export const GalleryApi = {
             headers: { "Content-Type": "multipart/form-data" },
         }).then((res) => res.data);
     },
+    update: (id, data) => axios.put(`/v1/gallery/${id}`, data).then((res) => res.data),
     delete: (id) => axios.delete(`/v1/gallery/${id}`).then((res) => res.data),
 };
 
@@ -34,6 +35,21 @@ export const useCreateGallery = () => {
         },
         onError: (error) => {
             toast.error("Failed to upload images");
+            console.error(error);
+        }
+    });
+};
+
+export const useUpdateGallery = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }) => GalleryApi.update(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries(GalleryKeys.lists());
+            toast.success("Image updated successfully");
+        },
+        onError: (error) => {
+            toast.error("Failed to update image");
             console.error(error);
         }
     });

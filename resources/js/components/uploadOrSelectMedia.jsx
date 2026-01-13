@@ -13,7 +13,7 @@ import {
 } from "./ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 
-export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => {
+export const UploadOrSelectMedia = ({ value, onChange, accept = { "image/*": [], "video/*": [] } }) => {
     const [open, setOpen] = React.useState(false);
     const [selectedMedia, setSelectedMedia] = React.useState(null);
 
@@ -40,7 +40,7 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => 
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
-        accept: accept ? { [accept]: [] } : undefined,
+        accept: typeof accept === "string" ? { [accept]: [] } : accept,
         multiple: false,
     });
 
@@ -65,11 +65,23 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => 
                 <div className="cursor-pointer">
                     {currentMedia ? (
                         <div className="relative group rounded-lg overflow-hidden border border-border">
-                            <img
-                                src={currentMedia.url}
-                                alt={currentMedia.original_name}
-                                className="w-full h-48 object-cover"
-                            />
+                            {currentMedia.mime_type?.startsWith("video") ? (
+                                <video
+                                    src={currentMedia.url}
+                                    className="w-full h-48 object-cover"
+                                    controls
+                                    muted // Added muted property
+                                >
+                                    {/* Still recommended to add the track to be safe */}
+                                    <track kind="captions" />
+                                </video>
+                            ) : (
+                                <img
+                                    src={currentMedia.url}
+                                    alt={currentMedia.original_name}
+                                    className="w-full h-48 object-cover"
+                                />
+                            )}
                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <Button type="button" size="sm">
                                     <Icon icon="solar:pen-linear" width="16" className="mr-2" />
@@ -179,11 +191,27 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = "image/*" }) => 
                                                     : "border-transparent hover:border-border"
                                             )}
                                         >
-                                            <img
-                                                src={media.url}
-                                                alt={media.original_name}
-                                                className="w-full h-32 object-cover"
-                                            />
+                                            <div className="absolute top-2 left-2 z-10 bg-black/50 rounded p-1 text-white">
+                                                {media.mime_type?.startsWith("video") ? (
+                                                    <Icon icon="solar:videocamera-linear" width="16" />
+                                                ) : (
+                                                <Icon icon="solar:gallery-linear" width="16" />
+                                                )}
+                                            </div>
+                                            {media.mime_type?.startsWith("video") ? (
+                                                <video
+                                                    src={media.url}
+                                                    className="w-full h-32 object-cover"
+                                                    muted
+                                                    playsInline
+                                                />
+                                            ) : (
+                                                <img
+                                                    src={media.url}
+                                                    alt={media.original_name}
+                                                    className="w-full h-32 object-cover"
+                                                />
+                                            )}
                                             {selectedMedia?.id === media.id && (
                                                 <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
                                                     <Icon icon="solar:check-circle-bold" width="20" />

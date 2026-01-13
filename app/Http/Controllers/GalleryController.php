@@ -12,9 +12,31 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class GalleryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Gallery::with(['media', 'category'])->get());
+        $query = Gallery::with(['media', 'category']);
+
+        if ($request->has('is_featured')) {
+            $isFeatured = filter_var($request->is_featured, FILTER_VALIDATE_BOOLEAN);
+            if ($isFeatured) {
+                $query->where('is_featured', true);
+            }
+        }
+
+        return response()->json($query->get());
+    }
+
+    public function update(Request $request, Gallery $gallery)
+    {
+        $validated = $request->validate([
+            'image_category_id' => 'nullable|exists:image_categories,id',
+            'is_active' => 'boolean',
+            'is_featured' => 'boolean',
+        ]);
+
+        $gallery->update($validated);
+
+        return response()->json($gallery->load(['media', 'category']));
     }
 
     public function store(Request $request)
@@ -23,6 +45,7 @@ class GalleryController extends Controller
             'files.*' => 'required|file|image|max:10240', // Max 10MB per file
             'category_id' => 'nullable|exists:image_categories,id',
             'is_active' => 'boolean',
+            'is_featured' => 'boolean',
         ]);
 
         $uploadedFiles = $request->file('files');
@@ -72,6 +95,7 @@ class GalleryController extends Controller
                     'image_id' => $media->id,
                     'image_category_id' => $request->category_id,
                     'is_active' => $request->is_active ?? true,
+                    'is_featured' => $request->is_featured ?? false,
                 ]);
 
                 $savedGalleries[] = $gallery->load(['media', 'category']);

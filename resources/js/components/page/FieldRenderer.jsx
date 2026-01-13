@@ -1,9 +1,12 @@
 import { cn } from "@/lib/utils";
-import { Field, FieldLabel, FieldDescription, FieldContent } from "../ui/field";
-import { Input } from "../ui/input";
-import { AutosizeTextarea } from "../ui/textarea";
+import { useDeleteField } from "@/services/field.service";
+import { Icon } from "@iconify-icon/react";
+import React from "react";
+import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
-import { Switch } from "../ui/switch";
+import { TiptapEditor } from "../ui/editor/Editor";
+import { Field, FieldContent, FieldDescription, FieldLabel } from "../ui/field";
+import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import {
     Select,
@@ -12,12 +15,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
-import { Button } from "../ui/button";
-import { Icon } from "@iconify-icon/react";
-import { useDeleteField } from "@/services/field.service";
+import { Switch } from "../ui/switch";
+import { AutosizeTextarea } from "../ui/textarea";
 import { UploadOrSelectMedia } from "../uploadOrSelectMedia";
-import { TiptapEditor } from "../ui/editor/Editor";
-import React from "react";
 
 const gridCol = {
     12: "col-span-12",
@@ -201,7 +201,7 @@ const renderFieldInput = (field, value, onChange) => {
                 <UploadOrSelectMedia
                     value={value ?? field.default_value}
                     onChange={onChange}
-                    accept="image/*"
+                    accept={{ "image/*": [], "video/*": [] }}
                 />
             );
 
