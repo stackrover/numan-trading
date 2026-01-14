@@ -12,12 +12,32 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Product::query()->with('category');
+        $query = Product::with('category');
 
         if ($search = $request->input('search')) {
-            $query->where('title', 'like', "%{$search}%")
-                ->orWhere('short_description', 'like', "%{$search}%")
-                ->orWhere('brand', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('short_description', 'like', "%{$search}%")
+                    ->orWhere('brand', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('is_featured')) {
+            $isFeatured = $request->input('is_featured');
+            $val = filter_var($isFeatured, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($val !== null) {
+                $query->where('is_featured', $val);
+            }
+        }
+
+        if ($request->filled('category_id') && is_numeric($request->input('category_id'))) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        if ($categorySlug = $request->input('category_slug')) {
+            $query->whereHas('category', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
+            });
         }
 
         if ($category = $request->input('category')) {
@@ -26,7 +46,7 @@ class ProductController extends Controller
             });
         }
 
-        return response()->json($query->paginate($request->input('limit', 15)));
+        return response()->json($query->latest()->paginate($request->input('limit', 15)));
     }
 
     /**
@@ -60,6 +80,7 @@ class ProductController extends Controller
 
             'usages' => 'nullable|array',
             'status' => 'string|in:draft,published',
+            'is_featured' => 'nullable|boolean',
         ]);
 
         $product = Product::create($validated);
@@ -112,6 +133,7 @@ class ProductController extends Controller
 
             'usages' => 'nullable|array',
             'status' => 'string|in:draft,published',
+            'is_featured' => 'nullable|boolean',
         ]);
 
         $product->update($validated);

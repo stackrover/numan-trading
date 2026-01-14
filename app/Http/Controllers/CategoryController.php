@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -22,6 +23,23 @@ class CategoryController extends Controller
         $query->with('children'); // Load hierarchy if needed
 
         return response()->json($query->paginate($request->input('limit', 15)));
+    }
+
+    /**
+     * Get all categories with basic fields and product count.
+     */
+    public function list(Request $request)
+    {
+        $total_all_products = Product::count();
+
+        $categories = Category::select('id', 'title', 'slug')
+            ->withCount('products as total_product_count')
+            ->paginate($request->input('limit', 15));
+
+        return response()->json([
+            'total_all_products' => $total_all_products,
+            'categories' => $categories
+        ]);
     }
 
     /**

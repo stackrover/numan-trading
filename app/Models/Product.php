@@ -28,11 +28,13 @@ class Product extends Model
         'usage_rate',
         'usages',
         'status',
+        'is_featured',
     ];
 
     protected $casts = [
         'usages' => 'array',
         'status' => 'string',
+        'is_featured' => 'boolean',
     ];
 
     public function category()

@@ -45,6 +45,7 @@ Route::prefix('v1')->name('api.')->group(function () {
     Route::apiResource('teams', TeamController::class);
 
     // Categories api
+    Route::get('categories/list', [CategoryController::class, 'list'])->name('categories.list');
     Route::apiResource('categories', CategoryController::class);
 
     // Brands api

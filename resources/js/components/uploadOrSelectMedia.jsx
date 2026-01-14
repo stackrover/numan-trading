@@ -54,9 +54,34 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = { "image/*": [],
 
     // Get current media
     const currentMedia = React.useMemo(() => {
-        if (!value || !mediaList) return null;
-        const mediaId = typeof value === "object" ? value.id : value;
-        return mediaList.find((m) => m.id === mediaId);
+        if (!value) return null;
+
+        // If it's an object with a URL (from selection/upload)
+        if (typeof value === "object" && value.url) return value;
+
+        // Try to find in mediaList if available
+        if (mediaList) {
+            const mediaId = typeof value === "object" ? value.id : value;
+            const media = mediaList.find((m) => m.id === mediaId || m.url === value);
+            if (media) return media;
+        }
+
+        // Fallback for URL string (important for initial edit mode)
+        // If it starts with http, /, or has a common image/video extension
+        if (
+            typeof value === "string" &&
+            (value.startsWith("http") ||
+                value.startsWith("/") ||
+                value.includes("storage/") ||
+                /\.(jpg|jpeg|png|gif|svg|webp|mp4|webm|ogg)$/i.test(value))
+        ) {
+            return {
+                url: value,
+                original_name: "Current Image",
+            };
+        }
+
+        return null;
     }, [value, mediaList]);
 
     return (
@@ -191,7 +216,7 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = { "image/*": [],
                                                     : "border-transparent hover:border-border"
                                             )}
                                         >
-                                            <div className="absolute top-2 left-2 z-10 bg-black/50 rounded p-1 text-white">
+                                            <div className="absolute top-2 left-2 z-10 bg-black/50 rounded h-6 flex justify-center items-center w-6 text-white">
                                                 {media.mime_type?.startsWith("video") ? (
                                                     <Icon icon="solar:videocamera-linear" width="16" />
                                                 ) : (
@@ -213,7 +238,7 @@ export const UploadOrSelectMedia = ({ value, onChange, accept = { "image/*": [],
                                                 />
                                             )}
                                             {selectedMedia?.id === media.id && (
-                                                <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
+                                                <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full h-6 w-6 flex justify-center items-center">
                                                     <Icon icon="solar:check-circle-bold" width="20" />
                                                 </div>
                                             )}

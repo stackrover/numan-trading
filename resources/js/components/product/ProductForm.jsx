@@ -1,34 +1,6 @@
-import React, { useEffect } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { BrandForm } from "@/components/brand/BrandForm";
+import { CategoryForm } from "@/components/category/CategoryForm";
 import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-    FormDescription,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { AutosizeTextarea as Textarea } from "@/components/ui/textarea";
-import { TiptapEditor } from "@/components/ui/editor/Editor";
-import { UploadOrSelectMedia } from "@/components/uploadOrSelectMedia";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCategories } from "@/services/category.service";
-import { useBrands } from "@/services/brand.service";
-import { useCreateProduct, useUpdateProduct } from "@/services/product.service";
-import { useMedia } from "@/services/media.service";
-import { Check, ChevronsUpDown, Loader2, Plus, PlusCircle, Trash2 } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { cn } from "@/lib/utils";
 import {
     Command,
     CommandEmpty,
@@ -38,18 +10,46 @@ import {
     CommandList,
 } from "@/components/ui/command";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { CategoryForm } from "@/components/category/CategoryForm";
-import { BrandForm } from "@/components/brand/BrandForm";
+import { TiptapEditor } from "@/components/ui/editor/Editor";
+import {
+    Form,
+    FormControl,
+    FormDescription,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AutosizeTextarea as Textarea } from "@/components/ui/textarea";
+import { UploadOrSelectMedia } from "@/components/uploadOrSelectMedia";
+import { cn } from "@/lib/utils";
+import { useBrands } from "@/services/brand.service";
+import { useCategories } from "@/services/category.service";
+import { useMedia } from "@/services/media.service";
+import { useCreateProduct, useUpdateProduct } from "@/services/product.service";
+import { Check, ChevronsUpDown, Loader2, Plus, PlusCircle, Trash2 } from "lucide-react";
+import React, { useEffect } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 
 export const ProductForm = ({ product, onSuccess, onCancel }) => {
     const isEdit = !!product;
@@ -81,6 +81,7 @@ export const ProductForm = ({ product, onSuccess, onCancel }) => {
             description: product?.description || "",
             category_id: product?.category_id ? String(product.category_id) : "null",
             status: product?.status || "draft",
+            is_featured: product?.is_featured || false,
 
             origin: product?.origin || "",
             origin_details: product?.origin_details || "",
@@ -263,6 +264,29 @@ export const ProductForm = ({ product, onSuccess, onCancel }) => {
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="is_featured"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                            <div className="space-y-0.5">
+                                                <FormLabel className="text-base">
+                                                    Featured Product
+                                                </FormLabel>
+                                                <FormDescription>
+                                                    Show this product in featured sections.
+                                                </FormDescription>
+                                            </div>
+                                            <FormControl>
+                                                <Switch
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </FormControl>
                                         </FormItem>
                                     )}
                                 />
