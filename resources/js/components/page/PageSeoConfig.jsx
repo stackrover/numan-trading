@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AutosizeTextarea } from "@/components/ui/textarea";
-import { usePage, useUpdateSeoMutation } from "@/services/page.service";
+import { useUpdateSeoMutation } from "@/services/page.service";
 import { Icon } from "@iconify-icon/react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -126,6 +126,7 @@ export const PageSeoConfig = ({ page }) => {
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
                     className="flex items-center justify-between gap-4 py-2"
                 >
                     <h1 className="text-xl">SEO Configuration</h1>
@@ -144,6 +145,7 @@ export const PageSeoConfig = ({ page }) => {
                         <motion.div
                             initial={{ opacity: 0, x: -10, y: 10 }}
                             whileInView={{ opacity: 1, x: 0, y: 0 }}
+                            viewport={{ once: true }}
                             className="squircle-sm flex flex-col gap-y-5 bg-white p-5"
                         >
                             <h5 className="font-sans font-bold tracking-wider uppercase">
@@ -256,6 +258,7 @@ export const PageSeoConfig = ({ page }) => {
                         <motion.div
                             initial={{ opacity: 0, x: -10, y: 10 }}
                             whileInView={{ opacity: 1, x: 0, y: 0 }}
+                            viewport={{ once: true }}
                             className="squircle-sm flex flex-col gap-y-5 bg-white p-5"
                         >
                             <h5 className="font-sans font-bold tracking-wider uppercase">
@@ -408,6 +411,7 @@ export const PageSeoConfig = ({ page }) => {
                         <motion.div
                             initial={{ opacity: 0, x: -10, y: 10 }}
                             whileInView={{ opacity: 1, x: 0, y: 0 }}
+                            viewport={{ once: true }}
                             className="squircle-sm flex flex-col gap-y-5 bg-white p-5"
                         >
                             <h5 className="font-sans font-bold tracking-wider uppercase">
@@ -564,6 +568,7 @@ export const PageSeoConfig = ({ page }) => {
                         <motion.div
                             initial={{ opacity: 0, y: 10, x: 10 }}
                             whileInView={{ opacity: 1, y: 0, x: 0 }}
+                            viewport={{ once: true }}
                             className="squircle-sm sticky top-6 flex flex-col gap-y-5 bg-white p-5"
                         >
                             <h5 className="font-sans font-bold tracking-wider uppercase">

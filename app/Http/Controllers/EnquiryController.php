@@ -16,16 +16,38 @@ class EnquiryController extends Controller
         $query = Enquiry::with('product');
 
         if ($search = $request->input('search')) {
-            $query->where('name', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%")
-                ->orWhere('subject', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('subject', 'like', "%{$search}%")
+                    ->orWhere('company', 'like', "%{$search}%");
+            });
         }
 
         if ($status = $request->input('status')) {
             $query->where('status', $status);
         }
 
-        return response()->json($query->orderBy('created_at', 'desc')->paginate($request->input('limit', 15)));
+        if ($productId = $request->input('product_id')) {
+            $query->where('product_id', $productId);
+        }
+
+        if ($fromDate = $request->input('from_date')) {
+            $query->whereDate('created_at', '>=', $fromDate);
+        }
+
+        if ($toDate = $request->input('to_date')) {
+            $query->whereDate('created_at', '<=', $toDate);
+        }
+
+        $order = $request->input('order', 'desc');
+        $orderBy = $request->input('order_by', 'created_at');
+
+        if ($request->has('nopaginate')) {
+            return response()->json(['data' => $query->orderBy($orderBy, $order)->get()]);
+        }
+
+        return response()->json($query->orderBy($orderBy, $order)->paginate($request->input('limit', 15)));
     }
 
     /**

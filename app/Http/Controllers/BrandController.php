@@ -16,6 +16,10 @@ class BrandController extends Controller
                 ->orWhere('company', 'like', "%{$search}%");
         }
 
+        if ($request->boolean('nopaginate')) {
+            return response()->json(['data' => $query->get()]);
+        }
+
         return response()->json($query->paginate($request->input('limit', 15)));
     }
 

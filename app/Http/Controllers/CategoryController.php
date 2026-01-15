@@ -22,6 +22,10 @@ class CategoryController extends Controller
 
         $query->with('children'); // Load hierarchy if needed
 
+        if ($request->boolean('nopaginate')) {
+            return response()->json(['data' => $query->get()]);
+        }
+
         return response()->json($query->paginate($request->input('limit', 15)));
     }
 

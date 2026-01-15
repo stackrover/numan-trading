@@ -11,9 +11,19 @@ class PartnerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
-        return response()->json(Partner::all());
+        $query = Partner::query();
+
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($request->boolean('nopaginate')) {
+            return response()->json(['data' => $query->get()]);
+        }
+
+        return response()->json($query->paginate($request->input('limit', 15)));
     }
 
     /**

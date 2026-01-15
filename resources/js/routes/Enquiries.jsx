@@ -1,13 +1,47 @@
-import { useEnquiries } from "@/services/enquiry.service";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { generateBRPDF } from "@/lib/pdf-generator";
+import { EnquiryApi, useEnquiries } from "@/services/enquiry.service";
 import { Icon } from "@iconify-icon/react";
-import { useNavigate } from "react-router";
 import { format } from "date-fns";
-import { motion } from "motion/react";
+import React from "react";
+import { useNavigate } from "react-router";
+import * as XLSX from 'xlsx';
 
 export default function Enquiries() {
-    const { data, isLoading } = useEnquiries();
+    const [params, setParams] = React.useState({
+        search: "",
+        status: "all",
+        from_date: "",
+        to_date: "",
+    });
+
+    const [search, setSearch] = React.useState("");
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setParams(prev => ({ ...prev, search: search }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    const { data, isLoading } = useEnquiries({
+        ...params,
+        status: params.status === "all" ? "" : params.status
+    });
     const navigate = useNavigate();
 
     const enquiries = data?.data || [];
@@ -21,8 +55,54 @@ export default function Enquiries() {
         }
     };
 
+    const handleExport = async (type) => {
+        try {
+            const allData = await EnquiryApi.list({
+                ...params,
+                status: params.status === "all" ? "" : params.status,
+                nopaginate: 1
+            });
+
+            const exportData = allData.data.map(item => ({
+                Name: item.name,
+                Email: item.email,
+                Company: item.company || 'N/A',
+                Subject: item.subject,
+                Message: item.message,
+                Product: item.product?.title || 'N/A',
+                Status: item.status,
+                Received: format(new Date(item.created_at), 'MMM dd, yyyy')
+            }));
+
+            if (type === 'excel' || type === 'csv') {
+                const worksheet = XLSX.utils.json_to_sheet(exportData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Enquiries");
+
+                if (type === 'csv') {
+                    XLSX.writeFile(workbook, `enquiries_${format(new Date(), 'yyyyMMdd')}.csv`, { bookType: 'csv' });
+                } else {
+                    XLSX.writeFile(workbook, `enquiries_${format(new Date(), 'yyyyMMdd')}.xlsx`);
+                }
+            } else if (type === 'pdf') {
+                const columns = ["Name", "Email", "Company", "Subject", "Status", "Received"];
+                const rows = exportData.map(item => [
+                    item.Name,
+                    item.Email,
+                    item.Company,
+                    item.Subject,
+                    item.Status,
+                    item.Received
+                ]);
+                await generateBRPDF("Customer Enquiries Report", columns, rows, "enquiries");
+            }
+        } catch (error) {
+            console.error("Export failed", error);
+        }
+    };
+
     return (
-        <div className="p-6 lg:p-10 space-y-8 max-w-7xl mx-auto font-sans">
+        <div className="p-6 lg:p-10 space-y-8 w-full font-sans">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Customer Inquiries</h1>
@@ -30,19 +110,118 @@ export default function Enquiries() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <Icon icon="solar:filter-linear" className="text-lg" />
-                        <span>Filter Index</span>
-                    </button>
-                    <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <Icon icon="solar:file-download-linear" className="text-lg" />
-                        <span>Export CSV</span>
-                    </button>
+                    <div className="relative w-64 hidden sm:block">
+                        <Input
+                            placeholder="Search enquiries..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-10 h-10 bg-white border-slate-200"
+                        />
+                        <Icon icon="solar:magnifer-linear" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
+                    </div>
+
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                                <Icon icon="solar:filter-linear" className="text-lg" />
+                                <span>Filter</span>
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end" className="w-80 p-5 space-y-4">
+                            <div className="sm:hidden space-y-2">
+                                <label htmlFor="search-enquiries" className="text-xs font-bold uppercase text-slate-400">Search</label>
+                                <Input
+                                    id="search-enquiries"
+                                    placeholder="Search..."
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="status" className="text-xs font-bold uppercase text-slate-400">Status</label>
+                                <Select
+                                    value={params.status}
+                                    onValueChange={(val) => setParams(prev => ({ ...prev, status: val }))}
+                                >
+                                    <SelectTrigger id="status" className="w-full">
+                                        <SelectValue placeholder="Select Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Status</SelectItem>
+                                        <SelectItem value="unread">Unread</SelectItem>
+                                        <SelectItem value="read">Read</SelectItem>
+                                        <SelectItem value="replied">Replied</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-2">
+                                    <label htmlFor="from_date" className="text-xs font-bold uppercase text-slate-400">From Date</label>
+                                    <Input
+                                        id="from_date"
+                                        type="date"
+                                        value={params.from_date}
+                                        onChange={(e) => setParams(prev => ({ ...prev, from_date: e.target.value }))}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label htmlFor="to_date" className="text-xs font-bold uppercase text-slate-400">To Date</label>
+                                    <Input
+                                        id="to_date"
+                                        type="date"
+                                        value={params.to_date}
+                                        onChange={(e) => setParams(prev => ({ ...prev, to_date: e.target.value }))}
+                                    />
+                                </div>
+                            </div>
+
+                            <Button
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => {
+                                    setParams({
+                                        search: "",
+                                        status: "all",
+                                        from_date: "",
+                                        to_date: "",
+                                    });
+                                    setSearch("");
+                                }}
+                            >
+                                Reset Filters
+                            </Button>
+                        </PopoverContent>
+                    </Popover>
+
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                                <Icon icon="solar:file-download-linear" className="text-lg" />
+                                <span className="hidden sm:inline">Export</span>
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end" className="w-48 p-2 flex flex-col gap-1">
+                            <button onClick={() => handleExport('excel')} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-slate-50 rounded-md transition-colors w-full text-left">
+                                <Icon icon="vscode-icons:file-type-excel" className="text-lg" />
+                                Excel (.xlsx)
+                            </button>
+                            <button onClick={() => handleExport('csv')} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-slate-50 rounded-md transition-colors w-full text-left">
+                                <Icon icon="fluent:document-csv-16-filled" className="text-lg" />
+                                CSV (.csv)
+                            </button>
+                            <button onClick={() => handleExport('pdf')} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-slate-50 rounded-md transition-colors w-full text-left">
+                                <Icon icon="material-icon-theme:pdf" className="text-lg" />
+                                PDF (.pdf)
+                            </button>
+                        </PopoverContent>
+                    </Popover>
                 </div>
             </header>
 
-            <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
-                <Table>
+            <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm overflow-x-auto">
+                <Table className="min-w-[800px] sm:min-w-full">
                     <TableHeader>
                         <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
                             <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Sender Info</TableHead>
@@ -62,7 +241,7 @@ export default function Enquiries() {
                         ) : enquiries.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={5} className="text-center py-20 text-slate-400 font-medium">
-                                    No enquiries indexed at this time.
+                                    No enquiries found matching your criteria.
                                 </TableCell>
                             </TableRow>
                         ) : (

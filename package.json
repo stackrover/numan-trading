@@ -55,6 +55,8 @@
         "cmdk": "^1.1.1",
         "date-fns": "^4.1.0",
         "input-otp": "^1.4.2",
+        "jspdf": "^4.0.0",
+        "jspdf-autotable": "^5.0.7",
         "lodash": "^4.17.21",
         "lucide-react": "^0.561.0",
         "motion": "^12.23.26",
@@ -68,6 +70,7 @@
         "tailwind-merge": "^3.4.0",
         "tippy.js": "^6.3.7",
         "ts-pattern": "^5.9.0",
+        "xlsx": "^0.18.5",
         "zod": "^4.2.0",
         "zustand": "^5.0.9"
     }

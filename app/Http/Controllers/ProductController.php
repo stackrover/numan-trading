@@ -46,6 +46,10 @@ class ProductController extends Controller
             });
         }
 
+        if ($request->has('nopaginate')) {
+            return response()->json(['data' => $query->latest()->get()]);
+        }
+
         return response()->json($query->latest()->paginate($request->input('limit', 15)));
     }
 

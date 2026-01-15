@@ -1,3 +1,4 @@
+import { isDevCustomization } from "@/lib/utils";
 import { useDocuments, useSavePageDocument } from "@/services/document.service";
 import { Icon } from "@iconify-icon/react";
 import { motion } from "motion/react";
@@ -121,23 +122,25 @@ export const PageContent = ({ page, isLoading }) => {
                 )}
             </div>
 
-            <div className="flex items-center justify-center">
-                <Button asChild className="mx-auto">
-                    <motion.button
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                        viewport={{ once: true }}
-                        onClick={() => {
-                            setIsConfigDialogOpen(true);
-                            setEditBlock(null);
-                        }}
-                    >
-                        <Icon icon="solar:add-circle-linear" width="20" />
-                        Add Block
-                    </motion.button>
-                </Button>
-            </div>
+            {isDevCustomization() && (
+                <div className="flex items-center justify-center">
+                    <Button asChild className="mx-auto">
+                        <motion.button
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                            viewport={{ once: true }}
+                            onClick={() => {
+                                setIsConfigDialogOpen(true);
+                                setEditBlock(null);
+                            }}
+                        >
+                            <Icon icon="solar:add-circle-linear" width="20" />
+                            Add Block
+                        </motion.button>
+                    </Button>
+                </div>
+            )}
 
             <ConfigBlockDialog
                 pageId={page.id}

@@ -1,3 +1,4 @@
+import { isDevCustomization } from "@/lib/utils";
 import { useDeleteBlock } from "@/services/block.service";
 import { Icon } from "@iconify-icon/react";
 import { AnimatePresence, motion } from "motion/react";
@@ -62,55 +63,57 @@ export const Block = ({
                     </span>
                 </div>
 
-                <div className="flex items-center gap-2 opacity-0 group-hover/block:opacity-100 transition-opacity duration-200">
-                    <div className="flex items-center gap-1 border-r border-border pr-2">
+                {isDevCustomization() && (
+                    <div className="flex items-center gap-2 opacity-0 group-hover/block:opacity-100 transition-opacity duration-200">
+                        <div className="flex items-center gap-1 border-r border-border pr-2">
+                            <Button
+                                aria-label="Edit Block"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 hover:bg-foreground/10"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onOpenBlockEditDialog?.(block);
+                                }}
+                            >
+                                <Icon icon="solar:pen-linear" width="16" />
+                            </Button>
+                            <Button
+                                aria-label="Delete Block"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowDeleteDialog(true);
+                                }}
+                            >
+                                <Icon
+                                    icon="solar:trash-bin-minimalistic-linear"
+                                    width="16"
+                                />
+                            </Button>
+                        </div>
                         <Button
-                            aria-label="Edit Block"
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 hover:bg-foreground/10"
+                            aria-label="Add Field"
+                            variant="secondary"
+                            size="sm"
+                            className="text-xs h-8 px-3"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                onOpenBlockEditDialog?.(block);
-                            }}
-                        >
-                            <Icon icon="solar:pen-linear" width="16" />
-                        </Button>
-                        <Button
-                            aria-label="Delete Block"
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowDeleteDialog(true);
+                                setIsOpenFieldConfigDialogFor(block.id);
+                                setEditField(null);
                             }}
                         >
                             <Icon
-                                icon="solar:trash-bin-minimalistic-linear"
+                                icon="solar:add-circle-linear"
                                 width="16"
+                                className="mr-1.5"
                             />
+                            Add Field
                         </Button>
                     </div>
-                    <Button
-                        aria-label="Add Field"
-                        variant="secondary"
-                        size="sm"
-                        className="text-xs h-8 px-3"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setIsOpenFieldConfigDialogFor(block.id);
-                            setEditField(null);
-                        }}
-                    >
-                        <Icon
-                            icon="solar:add-circle-linear"
-                            width="16"
-                            className="mr-1.5"
-                        />
-                        Add Field
-                    </Button>
-                </div>
+                )}
             </div>
 
             <AnimatePresence>

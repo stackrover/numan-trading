@@ -92,7 +92,7 @@ Route::middleware('auth:web')->prefix('api')->group(function () {
     });
 
     // Dashboard routes
-    Route::get('/dashboard/stats', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.stats');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard.stats');
 
     // Enquiry routes
     Route::prefix('enquiries')->group(function () {

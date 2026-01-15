@@ -1,3 +1,4 @@
+import { isDevCustomization } from "@/lib/utils";
 import { useLogoutMutation } from "@/services/auth.service";
 import { usePages } from "@/services/page.service";
 import { Icon } from "@iconify-icon/react";
@@ -64,12 +65,14 @@ export const AppSidebar = () => {
             link: "/partners",
             icon: "solar:case-round-minimalistic-bold",
         },
-        {            id: "gallery",
+        {
+            id: "gallery",
             name: "Gallery",
             link: "/gallery",
             icon: "solar:gallery-bold",
         },
-        {            id: "pages",
+        {
+            id: "pages",
             name: "Pages",
             link: "/pages",
             icon: "solar:document-text-bold",
@@ -101,14 +104,14 @@ export const AppSidebar = () => {
                     {sidebarMenuItems.map((item) =>
                         item.children ? (
                             <div key={item.id} className="mb-6">
-                                <div className="flex items-center justify-between px-3 mb-2">
+                                <div className="flex items-center justify-between px-3 mb-2 mt-4">
                                     <SidebarGroupLabel className="text-[10px] font-bold uppercase tracking-widest text-slate-400 p-0 h-auto">
                                         {item.name}
                                     </SidebarGroupLabel>
-                                    {item.id === "pages" && (
+                                    {item.id === "pages" && isDevCustomization() && (
                                         <button
                                             onClick={() => setIsOpenPageDialog(true)}
-                                            className="size-5 rounded-md bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all"
+                                            className="size-5 cursor-pointer rounded-md bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:border-slate-300 transition-all"
                                         >
                                             <PlusIcon className="size-3" />
                                         </button>
@@ -149,7 +152,7 @@ export const AppSidebar = () => {
                                         <Link
                                             to={item.link}
                                             className={`
-                                                flex items-center gap-3 px-3 h-11 rounded-xl text-sm font-semibold transition-all
+                                                flex items-center gap-3 px-2 h-10 rounded-xl text-sm font-semibold transition-all
                                                 ${isActive
                                                     ? "bg-slate-900 text-white shadow-sm"
                                                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
@@ -157,7 +160,7 @@ export const AppSidebar = () => {
                                             `}
                                         >
                                             <div className={`
-                                                size-8 rounded-lg flex items-center justify-center transition-all
+                                                size-7 rounded-lg flex items-center justify-center transition-all
                                                 ${isActive ? "bg-indigo-500 text-white" : "bg-slate-50 text-slate-400"}
                                             `}>
                                                 <Icon icon={item.icon} className="text-xl" />
@@ -175,7 +178,7 @@ export const AppSidebar = () => {
             <SidebarFooter className="p-4 border-t border-slate-50">
                 <button
                     onClick={() => logout()}
-                    className="flex items-center gap-3 w-full h-10 px-3 rounded-xl text-sm font-bold text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-all group"
+                    className="flex cursor-pointer items-center gap-3 w-full h-10 px-2 rounded-xl text-sm font-bold text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-all group"
                 >
                     <div className="size-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-rose-100 group-hover:text-rose-600 transition-all">
                         <LogOut className="size-4" />

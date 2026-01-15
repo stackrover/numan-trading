@@ -16,9 +16,6 @@ use App\Http\Controllers\TestimonialController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
     // Pages api
     Route::apiResource('pages', PagesController::class);
     Route::put('pages/{slug}/seo', [PagesController::class, 'updateSeo'])->name('pages.seo');
@@ -64,10 +61,11 @@ Route::prefix('v1')->name('api.')->group(function () {
     // Enquiries api
     Route::post('enquiries/{id}/reply', [EnquiryController::class, 'reply'])->name('enquiries.reply');
     Route::apiResource('enquiries', EnquiryController::class);
-});
 
-// Public API
-Route::prefix('public')->group(function () {
-    Route::get('/pages/{slug}', [PublicController::class, 'getPage'])->name('public.pages.show');
-    Route::get('/settings', [PublicController::class, 'getSettings'])->name('public.settings');
+    // Public API
+    Route::prefix('public')->group(function () {
+        Route::get('/pages/{slug}', [PublicController::class, 'getPage'])->name('public.pages.show');
+        Route::get('/settings', [PublicController::class, 'getSettings'])->name('public.settings');
+        Route::post('/visitors', [PublicController::class, 'trackVisitor'])->name('public.visitors.track');
+    });
 });

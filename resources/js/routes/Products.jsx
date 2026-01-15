@@ -2,14 +2,21 @@ import { ProductForm } from "@/components/product/ProductForm";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { generateBRPDF } from "@/lib/pdf-generator";
 import { useCategories } from "@/services/category.service";
-import { useDeleteProduct, useProducts } from "@/services/product.service";
+import { ProductApi, useDeleteProduct, useProducts } from "@/services/product.service";
 import { Icon } from "@iconify-icon/react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
+import * as XLSX from 'xlsx';
 
 export default function Products() {
     const [page, setPage] = useState(1);
@@ -23,9 +30,9 @@ export default function Products() {
         return () => clearTimeout(timer);
     }, [search]);
 
-    const { data, isLoading } = useProducts({ 
-        limit: 15, 
-        page, 
+    const { data, isLoading } = useProducts({
+        limit: 15,
+        page,
         search: debouncedSearch,
         is_featured: featuredFilter === "all" ? "" : featuredFilter,
         category_id: categoryFilter === "all" ? "" : categoryFilter
@@ -44,10 +51,6 @@ export default function Products() {
         current_page: data?.current_page || 1,
     };
     const categories = categoriesData?.data || [];
-
-    const getCategoryName = (id) => {
-        return categories.find(c => c.id === id)?.title || "Unclassified";
-    };
 
     const handleDelete = (id) => {
         deleteProduct(id);
@@ -68,8 +71,53 @@ export default function Products() {
         setSelectedProduct(null);
     };
 
+    const handleExport = async (type) => {
+        try {
+            const allData = await ProductApi.list({
+                search: debouncedSearch,
+                is_featured: featuredFilter === "all" ? "" : featuredFilter,
+                category_id: categoryFilter === "all" ? "" : categoryFilter,
+                nopaginate: 1
+            });
+
+            const exportData = allData.data.map(item => ({
+                Title: item.title,
+                Brand: item.brand || 'N/A',
+                Category: item.category?.title || 'N/A',
+                Featured: item.is_featured ? 'Yes' : 'No',
+                Status: item.status,
+                Created: format(new Date(item.created_at), 'MMM dd, yyyy')
+            }));
+
+            if (type === 'excel' || type === 'csv') {
+                const worksheet = XLSX.utils.json_to_sheet(exportData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Products");
+
+                if (type === 'csv') {
+                    XLSX.writeFile(workbook, `products_${format(new Date(), 'yyyyMMdd')}.csv`, { bookType: 'csv' });
+                } else {
+                    XLSX.writeFile(workbook, `products_${format(new Date(), 'yyyyMMdd')}.xlsx`);
+                }
+            } else if (type === 'pdf') {
+                const columns = ["Title", "Brand", "Category", "Featured", "Status", "Created"];
+                const rows = exportData.map(item => [
+                    item.Title,
+                    item.Brand,
+                    item.Category,
+                    item.Featured,
+                    item.Status,
+                    item.Created
+                ]);
+                await generateBRPDF("Product Inventory Report", columns, rows, "products");
+            }
+        } catch (error) {
+            console.error("Export failed", error);
+        }
+    };
+
     return (
-        <div className="p-6 lg:p-10 space-y-8 max-w-7xl mx-auto font-sans">
+        <div className="p-6 lg:p-10 space-y-8 w-full font-sans">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Product Inventory</h1>
@@ -77,73 +125,125 @@ export default function Products() {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <div className="relative w-64 hidden sm:block">
+                        <Input
+                            placeholder="Search products..."
+                            value={search}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                                setPage(1);
+                            }}
+                            className="pl-10 h-10 bg-white border-slate-200"
+                        />
+                        <Icon icon="solar:magnifer-linear" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
+                    </div>
+
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                                <Icon icon="solar:filter-linear" className="text-lg" />
+                                <span>Filter</span>
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end" className="w-80 p-5 space-y-4">
+                            <div className="sm:hidden space-y-2">
+                                <label htmlFor="search-products" className="text-xs font-bold uppercase text-slate-400">Search</label>
+                                <Input
+                                    id="search-products"
+                                    placeholder="Search products..."
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="category-filter" className="text-xs font-bold uppercase text-slate-400">Category</label>
+                                <Select value={categoryFilter} onValueChange={(val) => { setCategoryFilter(val); setPage(1); }}>
+                                    <SelectTrigger id="category-filter" className="w-full">
+                                        <SelectValue placeholder="All Categories" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Categories</SelectItem>
+                                        {categories.map(category => (
+                                            <SelectItem key={category.id} value={category.id.toString()}>
+                                                {category.title}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="featured-filter" className="text-xs font-bold uppercase text-slate-400">Featured Status</label>
+                                <Select value={featuredFilter} onValueChange={(val) => { setFeaturedFilter(val); setPage(1); }}>
+                                    <SelectTrigger id="featured-filter" className="w-full">
+                                        <SelectValue placeholder="All Products" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">All Status</SelectItem>
+                                        <SelectItem value="true">Featured Only</SelectItem>
+                                        <SelectItem value="false">Standard Only</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <Button
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => {
+                                    setSearch("");
+                                    setCategoryFilter("all");
+                                    setFeaturedFilter("all");
+                                    setPage(1);
+                                }}
+                            >
+                                Reset Filters
+                            </Button>
+                        </PopoverContent>
+                    </Popover>
+
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <button className="h-10 px-4 rounded-lg bg-white border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                                <Icon icon="solar:file-download-linear" className="text-lg" />
+                                <span className="hidden sm:inline">Export</span>
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent align="end" className="w-48 p-2 flex flex-col gap-1">
+                            <button onClick={() => handleExport('excel')} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-slate-50 rounded-md transition-colors w-full text-left">
+                                <Icon icon="vscode-icons:file-type-excel" className="text-lg" />
+                                Excel (.xlsx)
+                            </button>
+                            <button onClick={() => handleExport('csv')} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-slate-50 rounded-md transition-colors w-full text-left">
+                                <Icon icon="fluent:document-csv-16-filled" className="text-lg" />
+                                CSV (.csv)
+                            </button>
+                            <button onClick={() => handleExport('pdf')} className="flex cursor-pointer items-center gap-3 px-3 py-2 text-sm font-medium hover:bg-slate-50 rounded-md transition-colors w-full text-left">
+                                <Icon icon="material-icon-theme:pdf" className="text-lg" />
+                                PDF (.pdf)
+                            </button>
+                        </PopoverContent>
+                    </Popover>
+
                     <Button
                         onClick={handleCreate}
                         className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-10 px-5 rounded-lg border border-slate-800 shadow-sm transition-all flex items-center gap-2 text-xs uppercase tracking-wider group"
                     >
                         <Icon icon="solar:add-circle-linear" className="text-lg" />
-                        <span>Add New Product</span>
+                        <span className="hidden sm:inline">Add Product</span>
+                        <span className="sm:hidden">Add</span>
                     </Button>
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-white p-4 rounded-xl border border-slate-200/60 shadow-sm">
-                <div className="relative">
-                    <Icon icon="solar:magnifer-linear" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <Input
-                        placeholder="Search products..."
-                        className="pl-10 h-10 rounded-lg border-slate-200"
-                        value={search}
-                        onChange={(e) => {
-                            setSearch(e.target.value);
-                            setPage(1);
-                        }}
-                    />
-                </div>
-                <Select value={categoryFilter} onValueChange={(val) => { setCategoryFilter(val); setPage(1); }}>
-                    <SelectTrigger className="h-10 rounded-lg border-slate-200">
-                        <SelectValue placeholder="Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Categories</SelectItem>
-                        {categories.map(cat => (
-                            <SelectItem key={cat.id} value={String(cat.id)}>{cat.title}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                <Select value={featuredFilter} onValueChange={(val) => { setFeaturedFilter(val); setPage(1); }}>
-                    <SelectTrigger className="h-10 rounded-lg border-slate-200">
-                        <SelectValue placeholder="Featured" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Featured: All</SelectItem>
-                        <SelectItem value="1">Featured: Yes</SelectItem>
-                        <SelectItem value="0">Featured: No</SelectItem>
-                    </SelectContent>
-                </Select>
-                <Button 
-                    variant="outline" 
-                    className="h-10 rounded-lg text-slate-500 font-bold text-xs uppercase tracking-wider"
-                    onClick={() => {
-                        setSearch("");
-                        setFeaturedFilter("all");
-                        setCategoryFilter("all");
-                        setPage(1);
-                    }}
-                >
-                    Reset Filters
-                </Button>
-            </div>
-
-            <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm">
-                <Table>
+            <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden shadow-sm overflow-x-auto">
+                <Table className="min-w-[800px] sm:min-w-full">
                     <TableHeader>
                         <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
-                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Product / Name</TableHead>
-                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Category</TableHead>
-                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Featured</TableHead>
+                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Product Info</TableHead>
+                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Category & Brand</TableHead>
+                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400 text-center">Featured</TableHead>
                             <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Status</TableHead>
-                            <TableHead className="px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400">Created</TableHead>
                             <TableHead className="text-right px-6 h-14 text-xs font-bold uppercase tracking-wider text-slate-400 w-[120px]">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -151,93 +251,90 @@ export default function Products() {
                         {isLoading ? (
                             Array.from({ length: 5 }).map((_, i) => (
                                 <TableRow key={i}>
-                                    <TableCell colSpan={6} className="h-20 animate-pulse bg-slate-50/20"></TableCell>
+                                    <TableCell colSpan={5} className="h-16 animate-pulse bg-slate-50/20"></TableCell>
                                 </TableRow>
                             ))
                         ) : products.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center py-20 text-slate-400 font-medium">
-                                    No products found in the current index.
+                                <TableCell colSpan={5} className="text-center py-20 text-slate-400 font-medium">
+                                    No products found matching your criteria.
                                 </TableCell>
                             </TableRow>
                         ) : (
                             products.map((product) => (
-                                <TableRow key={product.id} className="hover:bg-slate-50/50 transition-colors h-20 border-b border-slate-50 last:border-0 bg-transparent">
-                                    <TableCell className="px-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="size-12 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200/60 overflow-hidden p-1 shadow-inner">
-                                                {product.thumbnail ? (
-                                                    <img src={product.thumbnail} alt={product.title} className="w-full h-full object-cover rounded-lg" />
-                                                ) : (
-                                                    <Icon icon="solar:gallery-linear" className="text-xl text-slate-300" />
-                                                )}
-                                            </div>
+                                <TableRow key={product.id} className="hover:bg-slate-50/50 transition-colors h-16 border-b border-slate-50 last:border-0 border-t-0 bg-transparent">
+                                    <TableCell className="px-6 border-t-0">
+                                        <div className="flex items-center gap-3">
+                                            {product.thumbnail ? (
+                                                <img src={product.thumbnail} alt={product.title} className="size-10 rounded-lg object-cover border border-slate-100" />
+                                            ) : (
+                                                <div className="size-10 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400">
+                                                    <Icon icon="solar:box-linear" className="text-xl" />
+                                                </div>
+                                            )}
                                             <div className="flex flex-col">
                                                 <span className="text-sm font-bold text-slate-900">{product.title}</span>
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{product.slug}</span>
+                                                <span className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">Slug: {product.slug}</span>
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="px-6">
-                                        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-50 border border-slate-100 text-[11px] font-bold text-slate-600">
-                                            <Icon icon="solar:tag-linear" />
-                                            {product.category?.title || "Unclassified"}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell className="px-6">
-                                        <div className="flex items-center">
-                                            {product.is_featured ? (
-                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-[10px] font-bold uppercase tracking-wider">
-                                                    <Icon icon="solar:star-bold" className="text-amber-500" />
-                                                    Yes
-                                                </span>
-                                            ) : (
-                                                <span className="inline-flex items-center px-2 py-1 rounded-full bg-slate-100 text-slate-400 border border-slate-200 text-[10px] font-bold uppercase tracking-wider">
-                                                    No
-                                                </span>
-                                            )}
+                                    <TableCell className="px-6 border-t-0">
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded w-fit">
+                                                {product.category?.title || "Uncategorized"}
+                                            </span>
+                                            <span className="text-xs text-slate-500 font-medium">{product.brand || "Private Label"}</span>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="px-6">
-                                        <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${product.status === 'published' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                                    <TableCell className="px-6 border-t-0 text-center">
+                                        {product.is_featured ? (
+                                            <div className="flex justify-center">
+                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 border border-amber-200">
+                                                    Featured
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <span className="text-slate-300 text-xs">-</span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="px-6 border-t-0">
+                                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${product.status === 'published'
+                                            ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                                            : 'bg-slate-100 text-slate-700 border-slate-200'
+                                            }`}>
                                             {product.status}
                                         </span>
                                     </TableCell>
-                                    <TableCell className="px-6">
-                                        <span className="text-xs font-medium text-slate-500">
-                                            {format(new Date(product.created_at), "MMM d, yyyy")}
-                                        </span>
-                                    </TableCell>
-                                    <TableCell className="px-6 text-right">
-                                        <div className="flex justify-end gap-1">
+                                    <TableCell className="px-6 border-t-0 text-right">
+                                        <div className="flex items-center justify-end gap-1">
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
+                                                className="h-8 w-8 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                                                 onClick={() => handleEdit(product)}
-                                                className="h-9 w-9 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
                                             >
-                                                <Icon icon="solar:pen-linear" width="18" />
+                                                <Icon icon="solar:pen-linear" className="text-lg" />
                                             </Button>
-
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all">
-                                                        <Icon icon="solar:trash-bin-trash-linear" width="18" />
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                                                    >
+                                                        <Icon icon="solar:trash-bin-minimalistic-linear" className="text-lg" />
                                                     </Button>
                                                 </AlertDialogTrigger>
-                                                <AlertDialogContent className="rounded-xl border-slate-200 shadow-xl">
+                                                <AlertDialogContent>
                                                     <AlertDialogHeader>
-                                                        <AlertDialogTitle className="font-bold text-slate-900">Delete Product</AlertDialogTitle>
-                                                        <AlertDialogDescription className="text-slate-500 font-medium">
-                                                            Are you sure you want to delete "{product.title}"? This process is permanent.
+                                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This action cannot be undone. This will permanently delete <strong>{product.title}</strong> from the inventory.
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
-                                                    <AlertDialogFooter className="gap-2">
-                                                        <AlertDialogCancel className="rounded-xl h-10 font-bold border-slate-200 text-xs uppercase tracking-wider">Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction
-                                                            onClick={() => handleDelete(product.id)}
-                                                            className="rounded-xl h-10 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider shadow-sm"
-                                                        >
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={() => handleDelete(product.id)} className="bg-rose-600 hover:bg-rose-700">
                                                             Delete Product
                                                         </AlertDialogAction>
                                                     </AlertDialogFooter>
@@ -250,66 +347,61 @@ export default function Products() {
                         )}
                     </TableBody>
                 </Table>
+            </div>
 
-                <div className="flex items-center justify-between px-6 py-4 bg-slate-50/30 border-t border-slate-100">
-                    <div className="text-[11px] text-slate-400 font-bold uppercase tracking-widest">
-                        Showing {products.length} of {pagination.total} results
-                    </div>
+            {pagination.last_page > 1 && (
+                <div className="flex items-center justify-between bg-white px-6 py-4 rounded-xl border border-slate-200/60 shadow-sm">
+                    <p className="text-sm text-slate-500 font-medium">
+                        Showing <span className="font-bold text-slate-900">{products.length}</span> of <span className="font-bold text-slate-900">{pagination.total}</span> products
+                    </p>
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
                             size="sm"
+                            className="h-9 px-4 rounded-lg font-semibold"
                             onClick={() => setPage(p => Math.max(1, p - 1))}
-                            disabled={page === 1 || isLoading}
-                            className="h-8 px-3 rounded-lg border-slate-200 bg-white text-slate-600 font-bold text-[10px] uppercase tracking-wider disabled:opacity-20 transition-all hover:bg-slate-50"
+                            disabled={page === 1}
                         >
                             Previous
                         </Button>
                         <div className="flex items-center gap-1">
-                            {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
-                                // Simple sliding window or just first 5 for now
-                                return i + 1;
-                            }).map((p) => (
+                            {Array.from({ length: Math.min(5, pagination.last_page) }).map((_, i) => (
                                 <Button
-                                    key={p}
-                                    variant={page === p ? "default" : "outline"}
+                                    key={i}
+                                    variant={page === i + 1 ? "default" : "ghost"}
                                     size="sm"
-                                    onClick={() => setPage(p)}
-                                    disabled={isLoading}
-                                    className={`h-8 w-8 p-0 rounded-lg text-[10px] font-bold transition-all shadow-sm ${
-                                        page === p 
-                                        ? "bg-slate-900 border-slate-900 text-white hover:bg-slate-800" 
-                                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
-                                    }`}
+                                    className={`size-9 rounded-lg font-bold ${page === i + 1 ? 'bg-slate-900 text-white' : 'text-slate-500'}`}
+                                    onClick={() => setPage(i + 1)}
                                 >
-                                    {p}
+                                    {i + 1}
                                 </Button>
                             ))}
-                            {pagination.last_page > 5 && <span className="text-slate-300 px-1">...</span>}
                         </div>
                         <Button
                             variant="outline"
                             size="sm"
+                            className="h-9 px-4 rounded-lg font-semibold"
                             onClick={() => setPage(p => Math.min(pagination.last_page, p + 1))}
-                            disabled={page === pagination.last_page || isLoading}
-                            className="h-8 px-3 rounded-lg border-slate-200 bg-white text-slate-600 font-bold text-[10px] uppercase tracking-wider disabled:opacity-20 transition-all hover:bg-slate-50"
+                            disabled={page === pagination.last_page}
                         >
                             Next
                         </Button>
                     </div>
                 </div>
-            </div>
+            )}
 
             <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
-                <SheetContent side="right" className="w-[95vw] sm:w-[600px] sm:max-w-[700px] overflow-y-auto p-0 flex flex-col">
-                    <SheetHeader className="p-6 pb-2">
-                        <SheetTitle className="text-xl font-bold">{selectedProduct ? "Edit Product" : "Add New Product"}</SheetTitle>
-                        <SheetDescription>
-                            Configure chemical properties, details, and usage.
+                <SheetContent side="right" className="w-[95vw] sm:w-[600px] sm:max-w-[700px] overflow-y-auto">
+                    <SheetHeader className="mb-8">
+                        <SheetTitle className="text-2xl font-bold tracking-tight">
+                            {selectedProduct ? "Edit Product" : "Add New Product"}
+                        </SheetTitle>
+                        <SheetDescription className="text-slate-500 font-medium">
+                            {selectedProduct ? "Modify the details of your existing product." : "Enter the specifications for the new product catalog entry."}
                         </SheetDescription>
                     </SheetHeader>
 
-                    <div className="flex-1 p-6 pt-2">
+                    <div className="px-4 sm:px-6 pb-6">
                         <ProductForm
                             product={selectedProduct}
                             onSuccess={handleFormSuccess}

@@ -2,17 +2,17 @@ import axios from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
 export const DashboardApi = {
-    getStats: () => axios.get("/dashboard").then((res) => res.data),
+    getStats: (params) => axios.get("/dashboard", { params }).then((res) => res.data),
 };
 
 export const DashboardKeys = {
     all: ["dashboard"],
-    stats: () => [...DashboardKeys.all, "stats"],
+    stats: (params) => [...DashboardKeys.all, "stats", params],
 };
 
-export const useDashboardStats = () => {
+export const useDashboardStats = (params) => {
     return useQuery({
-        queryKey: DashboardKeys.stats(),
-        queryFn: DashboardApi.getStats,
+        queryKey: DashboardKeys.stats(params),
+        queryFn: () => DashboardApi.getStats(params),
     });
 };

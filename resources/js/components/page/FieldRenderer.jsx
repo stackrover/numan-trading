@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn, isDevCustomization } from "@/lib/utils";
 import { useDeleteField } from "@/services/field.service";
 import { Icon } from "@iconify-icon/react";
 import React from "react";
@@ -286,27 +286,29 @@ export const FieldRenderer = ({ field, value, onChange, onEdit }) => {
                             <span className="text-destructive ml-1">*</span>
                         )}
                     </FieldLabel>
-                    <div className="flex items-center gap-1 opacity-0 group-hover/field:opacity-100 transition-opacity duration-200">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 hover:bg-foreground/10"
-                            onClick={onEdit}
-                        >
-                            <Icon icon="solar:pen-linear" width="12" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                            onClick={handleDeleteField}
-                        >
-                            <Icon
-                                icon="solar:trash-bin-minimalistic-linear"
-                                width="12"
-                            />
-                        </Button>
-                    </div>
+                    {isDevCustomization() && (
+                        <div className="flex items-center gap-1 opacity-0 group-hover/field:opacity-100 transition-opacity duration-200">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 hover:bg-foreground/10"
+                                onClick={onEdit}
+                            >
+                                <Icon icon="solar:pen-linear" width="12" />
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                onClick={handleDeleteField}
+                            >
+                                <Icon
+                                    icon="solar:trash-bin-minimalistic-linear"
+                                    width="12"
+                                />
+                            </Button>
+                        </div>
+                    )}
                 </div>
                 {field.help_text && (
                     <FieldDescription>{field.help_text}</FieldDescription>

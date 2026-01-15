@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 export const GalleryApi = {
-    list: () => axios.get("/v1/gallery").then((res) => res.data),
+    list: (params) => axios.get("/v1/gallery", { params }).then((res) => res.data),
     create: (formData) => {
         return axios.post("/v1/gallery", formData, {
             headers: { "Content-Type": "multipart/form-data" },
@@ -18,10 +18,10 @@ export const GalleryKeys = {
     lists: () => [...GalleryKeys.all, "list"],
 };
 
-export const useGallery = () => {
+export const useGallery = (params) => {
     return useQuery({
-        queryKey: GalleryKeys.lists(),
-        queryFn: GalleryApi.list,
+        queryKey: [...GalleryKeys.lists(), params],
+        queryFn: () => GalleryApi.list(params),
     });
 };
 

@@ -40,13 +40,13 @@ export const CreateImageCategoryDialog = () => {
                     <Plus className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] rounded-2xl">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
                         <DialogTitle>Add Category</DialogTitle>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
+                        <div className="space-y-2">
                             <Label htmlFor="name" className="text-right">
                                 Name
                             </Label>

@@ -12,6 +12,7 @@ import { Icon } from "@iconify-icon/react";
 import { Loader2, UploadCloud } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { Label } from "../ui/label";
 import { CreateImageCategoryDialog } from "./CreateImageCategoryDialog";
 
 export const GalleryUpload = ({ onSuccess }) => {
@@ -42,9 +43,9 @@ export const GalleryUpload = ({ onSuccess }) => {
         files.forEach((file) => {
             formData.append("files[]", file);
         });
-        
+
         if (selectedCategory && selectedCategory !== "all") {
-             formData.append("category_id", selectedCategory);
+            formData.append("category_id", selectedCategory);
         }
 
         uploadGallery(formData, {
@@ -56,13 +57,13 @@ export const GalleryUpload = ({ onSuccess }) => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl border border-slate-200/60 space-y-6">
+        <div className="bg-white border-slate-200/60 space-y-6">
             <div className="flex items-end gap-3">
-                <div className="flex-1 space-y-2">
-                    <label htmlFor="category-select" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Category</label>
+                <div className="w-full space-y-2">
+                    <Label htmlFor="category-select" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Category</Label>
                     <div className="flex gap-2">
                         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                            <SelectTrigger id="category-select">
+                            <SelectTrigger id="category-select" className="data-[size=default]:h-10 w-full data-[size=sm]:h-10">
                                 <SelectValue placeholder="Select upload category (Optional)" />
                             </SelectTrigger>
                             <SelectContent>
@@ -81,9 +82,8 @@ export const GalleryUpload = ({ onSuccess }) => {
 
             <div
                 {...getRootProps()}
-                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
-                    isDragActive ? "border-indigo-500 bg-indigo-50" : "border-slate-200 hover:border-slate-300"
-                }`}
+                className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${isDragActive ? "border-indigo-500 bg-indigo-50" : "border-slate-200 hover:border-slate-300"
+                    }`}
             >
                 <input {...getInputProps()} />
                 <div className="flex flex-col items-center gap-2 text-slate-500">
@@ -114,7 +114,7 @@ export const GalleryUpload = ({ onSuccess }) => {
                             </div>
                         ))}
                     </div>
-                    
+
                     <div className="flex justify-end">
                         <Button onClick={handleUpload} disabled={isPending}>
                             {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

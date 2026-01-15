@@ -18,12 +18,20 @@ class GalleryController extends Controller
 
         if ($request->has('is_featured')) {
             $isFeatured = filter_var($request->is_featured, FILTER_VALIDATE_BOOLEAN);
-            if ($isFeatured) {
-                $query->where('is_featured', true);
+            if ($request->has('is_featured') && $request->is_featured !== 'all') {
+                $query->where('is_featured', $isFeatured);
             }
         }
 
-        return response()->json($query->get());
+        if ($search = $request->input('search')) {
+            $query->where('title', 'like', "%{$search}%");
+        }
+
+        if ($request->boolean('nopaginate')) {
+            return response()->json(['data' => $query->get()]);
+        }
+
+        return response()->json($query->paginate($request->input('limit', 15)));
     }
 
     public function update(Request $request, Gallery $gallery)

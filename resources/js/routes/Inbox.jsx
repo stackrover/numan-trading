@@ -1,13 +1,11 @@
-import { Icon } from "@iconify-icon/react";
-import React from "react";
-import { useParams, useNavigate } from "react-router";
-import { useEnquiry, useReplyEnquiry } from "@/services/enquiry.service";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TiptapEditor } from "@/components/ui/editor/Editor";
+import { useEnquiry, useReplyEnquiry } from "@/services/enquiry.service";
+import { Icon } from "@iconify-icon/react";
 import { format } from "date-fns";
-import { motion } from "motion/react";
-import { PlusIcon } from "lucide-react";
+import React from "react";
+import { useNavigate, useParams } from "react-router";
 
 export default function Inbox() {
     const { id } = useParams();
@@ -44,7 +42,7 @@ export default function Inbox() {
     );
 
     return (
-        <div className="p-6 lg:p-10 space-y-10 max-w-5xl mx-auto font-sans">
+        <div className="p-6 lg:p-10 space-y-10 w-full max-w-7xl mx-auto font-sans">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <button

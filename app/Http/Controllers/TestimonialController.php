@@ -12,9 +12,20 @@ class TestimonialController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Testimonial::all());
+        $query = Testimonial::query();
+
+        if ($search = $request->input('search')) {
+            $query->where('client_name', 'like', "%{$search}%")
+                ->orWhere('company', 'like', "%{$search}%");
+        }
+
+        if ($request->boolean('nopaginate')) {
+            return response()->json(['data' => $query->get()]);
+        }
+
+        return response()->json($query->paginate($request->input('limit', 15)));
     }
 
     /**

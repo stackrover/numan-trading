@@ -1,6 +1,6 @@
+import { Icon } from "@iconify-icon/react";
 import React from "react";
 import { Button } from "../ui/button";
-import { Icon } from "@iconify-icon/react";
 
 const NavbarContext = React.createContext();
 
@@ -38,7 +38,7 @@ export const Navbar = () => {
 
     return (
         <header className="h-16 flex items-center bg-white/80 backdrop-blur-md sticky top-0 z-30 border-b border-slate-200 px-6 sm:px-8">
-            <div className="w-full max-w-7xl mx-auto">
+            <div className="w-full">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
                         <div className="flex items-center gap-3">
@@ -69,9 +69,20 @@ export const Navbar = () => {
                         <div className="h-6 w-[1px] bg-slate-200 mx-1"></div>
 
                         {rightContent || (
-                            <Button className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-10 px-5 rounded-xl border border-slate-800 shadow-sm transition-all flex items-center gap-2 text-xs uppercase tracking-wider">
-                                <Icon icon="solar:globus-linear" className="text-lg" />
-                                <span>Visit Website</span>
+                            <Button asChild className="bg-slate-900 hover:bg-slate-800 text-white font-bold h-10 px-5 rounded-xl border border-slate-800 shadow-sm transition-all flex items-center gap-2 text-xs uppercase tracking-wider">
+                                <a
+                                    href={
+                                        import.meta.env.VITE_WEBSITE_URL || "#"
+                                    }
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    <Icon
+                                        icon="solar:globus-linear"
+                                        className="text-lg"
+                                    />
+                                    <span>Visit Website</span>
+                                </a>
                             </Button>
                         )}
                     </div>

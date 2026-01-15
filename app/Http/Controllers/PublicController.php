@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Page;
 use App\Models\Settings;
+use App\Models\Visitor;
 use Illuminate\Http\Request;
 
 class PublicController extends Controller
@@ -11,7 +12,7 @@ class PublicController extends Controller
     /**
      * Get page data including blocks, fields, SEO and hydrated document content.
      */
-    public function getPage($slug)
+    public function getPage(Request $request, $slug)
     {
         $page = Page::with(['blocks.fields', 'seo', 'document'])
             ->where('slug', $slug)
@@ -30,6 +31,21 @@ class PublicController extends Controller
             'structure' => $page->blocks,
             'published_at' => $page->published_at,
         ]);
+    }
+
+    /**
+     * Track a website visit.
+     */
+    public function trackVisitor(Request $request)
+    {
+        Visitor::create([
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'page_url' => $request->input('page_url', $request->header('referer')),
+            'referrer' => $request->input('referrer', $request->header('referer')),
+        ]);
+
+        return response()->json(['status' => 'success']);
     }
 
     /**
